@@ -2,12 +2,31 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import captureCropAndRecognizeText from 'react-native-ocr-scanner';
 import validator from 'validator';
-import { parsePhoneNumberWithError, parseError } from 'libphonenumber-js';
+import { parsePhoneNumberWithError, parseError, ParseError } from 'libphonenumber-js';
+
+
+const processPhoneNumber = (rawNumber) => {
+    try {
+        const cleaned = rawNumber.replace(/[^\d+]/g, '');
+        const phoneNumber = parsePhoneNumberWithError(cleaned);
+
+        if (phoneNumber.isPossible()) {
+            return phoneNumber.formatInternational();
+        }
+    } catch (error) {
+        if (error instanceof ParseError) {
+            console.log('Phone parse error:', error.message);
+        }
+    }
+
+    // Fallback if parsing fails
+    return rawNumber.replace(/[^\d+]/g, '');
+};
 
 const correctCommonOCRerrors = (text) => {
     return text
-        .replace(/(^|\s)([Oo])(\s|$)/g, '$10$3') // O/o to 0 in numeric contexts 
-        .replace(/\s@/g, '@')                    // Fix spaced @ 
+        .replace(/(^|\s)([Oo])(\s|$)/g, '$10$3') // O/o to 0 in numeric contexts
+        .replace(/\s@/g, '@')                    // Fix spaced @
         .replace(/[a»ÂÃ]/g, '@')                 // Common @ misreads
         .replace(/(\S+)a(\S+\.\S+)/g, '$1@$2')   // a to @ in emails
         .replace(/[`’]/g, "'")                   // Fix quotes
@@ -20,7 +39,7 @@ const correctCommonOCRerrors = (text) => {
 
 const extractContactInfo = (text) => {
     const cleanText = correctCommonOCRerrors(text);
-    const lines = cleanText.split('\n').filer(line => line.trim());
+    const lines = cleanText.split('\n').filter(line => line.trim());
 
     const findBestMatch = (patterns, text) => {
         const matches = new Set();
@@ -57,7 +76,7 @@ const extractContactInfo = (text) => {
 
     const titleKeywords = [
         'CEO', 'CTO', 'CFO', 'Manager', 'Director', 'Engineer', 'Specialist',
-        'Analyst', 'Designer', 'Developer'
+        'Analyst', 'Designer', 'Developer', 'Expert', 'Marketing', 'Head'
     ];
 
     const jobTitle = lines.find(line => 
@@ -140,19 +159,19 @@ export default function OCRScreen() {
         if (data.emails.includes(text)) return 'EMAIL';
         if (data.phones.some(p => text.includes(p))) return 'PHONE';
         if (data.websites.includes(text)) return 'WEBSITE';
-        if (Object.values(data.socia).flat().includes(text)) return 'SOCIAL';
+        if (Object.values(data.social).flat().includes(text)) return 'SOCIAL';
         if (data.education.includes(text)) return 'EDUCATION';
         return 'OTHER';
     };
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity onPress={handleOCR} style={styles.}>
-                <Text style={{ color: '#FFFFFF'}}>Scan Business Card</Text>    
+            <TouchableOpacity onPress={handleOCR} style={styles.scanButton}>
+                <Text style={styles.buttonText}>Scan Business Card</Text>    
             </TouchableOpacity>
         </View>
     );
-}
+};
 
 const styles = StyleSheet.create({
     container: {
