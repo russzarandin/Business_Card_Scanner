@@ -34,6 +34,13 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="fakescreen"
+        options={{
+          title: 'FakeScreen',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="gear.fill" color={color} />,
+        }}
+      />
+      <Tabs.Screen
         name="account"
         options={{
           title: 'Settings',
