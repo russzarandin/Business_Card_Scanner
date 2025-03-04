@@ -16,7 +16,8 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.babschiin.frontend"
+      "package": "com.babschiin.frontend",
+      "googleServicesFile": "./google-services.json" 
     },
     "web": {
       "bundler": "metro",

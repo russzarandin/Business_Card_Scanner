@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Button } from 'react-native';
 import { CameraView, useCameraPermissions, requestCameraPermissionsAsync } from 'expo-camera';
 import { Ionicons } from '@expo/vector-icons';
 import { CameraType } from 'expo-image-picker';
-import { useDarkMode } from '@/app/contexts/DarkModeContext';
+import { useDarkMode } from '@/contexts/DarkModeContext';
 
 const CameraComponent = ({ onCapture }) => {
     const { themeColors } = useDarkMode(); 

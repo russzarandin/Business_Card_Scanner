@@ -14,6 +14,7 @@ export const Colors = {
     buttonBackground: '#0A84FF',
     buttonText: '#FFFFFF',
     border: '#E0E0E0',
+    red: '#FF3B30'
   },
   dark: {
     text: '#E0E0E0',
@@ -22,5 +23,6 @@ export const Colors = {
     buttonBackground: '#0A84FF',
     buttonText: '#FFFFFF',
     border: '#303030',
+    red: '#FF3B30'
   },
 };

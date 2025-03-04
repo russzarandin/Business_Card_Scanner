@@ -3,7 +3,7 @@
  * https://docs.expo.dev/guides/color-schemes/
  */
 
-import { useDarkMode } from '@/app/contexts/DarkModeContext';
+import { useDarkMode } from '@/contexts/DarkModeContext';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme as useRNColorScheme } from 'react-native';
 

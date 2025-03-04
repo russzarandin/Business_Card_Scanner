@@ -53,7 +53,8 @@ export const DarkModeProvider = ({ children }) => {
         background: isDarkMode ? Colors.dark.background : Colors.light.background,
         text: isDarkMode ? Colors.dark.text : Colors.light.text,
         accent: isDarkMode ? Colors.dark.accent: Colors.light.accent,
-        border: isDarkMode ? Colors.dark.border : Colors.light.border
+        border: isDarkMode ? Colors.dark.border : Colors.light.border,
+        red: isDarkMode ? Colors.dark.red : Colors.light.red
     };
 
     return (
