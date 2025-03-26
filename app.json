@@ -17,7 +17,8 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.babschiin.frontend",
-      "googleServicesFile": "./google-services.json" 
+      "googleServicesFile": "./google-services.json",
+      "compileSdkVersion": 33
     },
     "web": {
       "bundler": "metro",
@@ -34,7 +35,8 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
-      ]
+      ],
+      "react-native-nfc-manager"
     ],
     "experiments": {
       "typedRoutes": true

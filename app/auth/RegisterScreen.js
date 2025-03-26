@@ -20,7 +20,7 @@ export default function RegisterScreen() {
         try {
             await signUp(name, email, password);
             Alert.alert('Registration Successful!');
-            router.push('/(tabs)/account')
+            router.push('/(tabs)/settings')
         } catch (error) {
             Alert.alert('Registration Failed', error.message);
         }
@@ -52,9 +52,11 @@ export default function RegisterScreen() {
                 onChangeText={setPassword}
                 secureTextEntry
             />
+            
             <TouchableOpacity style={[styles.button, { backgroundColor: themeColors.accent }]} onPress={handleRegister}>
                 <Text style={[styles.buttonText, { color: themeColors.text }]}>Register</Text>
             </TouchableOpacity>
+
             <TouchableOpacity onPress={() => router.push('/auth/LoginScreen')}>
                 <Text style={[styles.link, { color: themeColors.accent }]}>Already have an account? Login</Text>
             </TouchableOpacity>

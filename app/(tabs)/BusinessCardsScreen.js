@@ -1,6 +1,7 @@
 import React, { useState, useContext, useCallback } from 'react';
 import { View, FlatList, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { subscribeToBusinessCards } from '@/services/businessCardService';
 import { getLocalBusinessCards } from '@/services/localBusinessCardService';
 import { useDarkMode } from '@/contexts/DarkModeContext';
@@ -38,29 +39,29 @@ export default function BusinessCardsScreen() {
     if (loading) {
         return (
             <View style={styles.loadingContainer}>
-                <ActivityIndicator size='large' color={themeColors.accent}/>
+                <ActivityIndicator size='large' color={ themeColors.accent }/>
             </View>
         );
     }
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={[styles.container, { backgroundColor: themeColors.background }]}>
             {cards.length === 0 ? (
-                <Text style={styles.message}>No business cards found.</Text>
+                <Text style={[styles.message, { color: themeColors.text }]}>No business cards found.</Text>
             ) : (
                 <FlatList
                     data={cards}
                     keyExtractor={(item) => item.id || item.scannedAt}
                     renderItem={({ item }) => (
                         <View style={[styles.card, { backgroundColor: themeColors.accent }]}>
-                            <Text style={styles.cardText}>{item.rawText}</Text>
+                            <Text style={[styles.cardText, { color: themeColors.text }]}>{item.rawText}</Text>
                             <Text style={[styles.cardTimestamp, { color: themeColors.text }]}>{new Date(item.scannedAt).toLocaleString()}</Text>
                         </View>
                     )}
                     contentContainerStyle={styles.listContent}
                 />
             )}
-        </View>
+        </SafeAreaView>
     );
 }
 
@@ -88,5 +89,9 @@ const styles = StyleSheet.create({
     cardTimestamp: {
         fontSize: 12,
         marginTop: 5
+    },
+    message: {
+        textAlign: 'center',
+        top: '50%'
     }
 });

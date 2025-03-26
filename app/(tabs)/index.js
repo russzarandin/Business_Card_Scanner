@@ -66,7 +66,7 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={handleScan} style={[styles.scanButton, { backgroundColor: themeColors.background }]}>
+      <TouchableOpacity onPress={handleScan} style={[styles.scanButton, { backgroundColor: themeColors.accent }]}>
         <Text style={[styles.buttonText, { color: themeColors.text }]}>Scan Business Card</Text>    
       </TouchableOpacity>
     </View>

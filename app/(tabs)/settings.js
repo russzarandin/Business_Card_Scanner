@@ -1,13 +1,14 @@
 import React, { useContext } from 'react';
-import { View, Switch, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { View, Switch, StyleSheet, TouchableOpacity, Alert, Image } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useDarkMode } from '@/contexts/DarkModeContext';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { AuthContext } from '@/contexts/AuthContext';
 import { useRouter } from 'expo-router';
+import AvatarDisplay from '@/components/AvatarSource';
 
-export default function AccountScreen() {
+export default function SettingsScreen() {
   const { isDarkMode, toggleDarkMode, useSystemTheme, toggleSystemTheme, themeColors } = useDarkMode();
   const { user, signOut } = useContext(AuthContext);
   const router = useRouter();
@@ -21,8 +22,12 @@ export default function AccountScreen() {
     }
   }
 
+  const handleEditAvatar = () => {
+    router.push('/auth/AvatarCreator');
+  }
+
   return (
-    <ParallaxScrollView headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}>
+    <ParallaxScrollView headerBackgroundColor={ themeColors.background }>
       <ThemedView style={[styles.container, { backgroundColor: themeColors.background }]}>
         <ThemedText style={{ color: themeColors.text }} type='title'>Settings</ThemedText>
         <ThemedText style={{ color: themeColors.text }} type='subtitle'>Theme Settings</ThemedText>
@@ -45,9 +50,24 @@ export default function AccountScreen() {
               <ThemedText style={{ color: themeColors.text }} type='subtitle'>
                 Welcome, {user.displayName ? user.displayName : user.email}
               </ThemedText>
+
+              <TouchableOpacity onPress={handleEditAvatar}>
+                {user.photoURL ? (
+                  <AvatarDisplay uri={ user.photoURL } style={styles.avatar} />
+                ) : (
+                  <AvatarDisplay source={require('@/assets/images/placeholder.png')} style={styles.avatar} />
+                )}
+              </TouchableOpacity>
             </View>
+            
             <TouchableOpacity style={[styles.signOutButton, { backgroundColor: themeColors.red }]} onPress={handleSignOut}>
               <ThemedText style={{ color: themeColors.text }} type='button'>Sign Out</ThemedText>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={[styles.authButton, { backgroundColor: themeColors.accent }]} onPress={() => router.push('/auth/AccountSharingScreen')}>
+              <ThemedText style={{ color: themeColors.text }} type='button'>
+                Display account information
+              </ThemedText>
             </TouchableOpacity>
           </>
         ) : (
@@ -84,6 +104,12 @@ const styles = StyleSheet.create({
   userInfo: {
     marginVertical: 20,
     alignItems: 'center'
+  },
+  avatar: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginVertical: 10
   },
   signOutButton: {
     paddingVertical: 12,

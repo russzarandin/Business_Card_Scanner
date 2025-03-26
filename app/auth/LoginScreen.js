@@ -19,8 +19,8 @@ export default function LoginScreen() {
         try {
             await signIn(email, password);
             Alert.alert('Login Successful!');
-            // navigation.navigate('account');
-            router.push('/(tabs)/account')
+            // navigation.navigate('settings');
+            router.push('/(tabs)/settings')
         } catch (error) {
             Alert.alert('Login failed', error.message);
         }
@@ -45,9 +45,11 @@ export default function LoginScreen() {
                 onChangeText={setPassword}
                 secureTextEntry
             />
+            
             <TouchableOpacity style={[styles.button, { backgroundColor: themeColors.accent }]} onPress={handleLogin}>
                 <Text style={[styles.buttonText, { color: themeColors.text }]}>Login</Text>
             </TouchableOpacity>
+
             <TouchableOpacity onPress={() => router.push('/auth/RegisterScreen')}>
                 <Text style={[styles.link, { color: themeColors.accent }]}>Don't have an account? Register</Text>
             </TouchableOpacity>
