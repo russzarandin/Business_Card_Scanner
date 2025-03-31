@@ -63,7 +63,7 @@ export default function BusinessCardsScreen() {
             )}
         </SafeAreaView>
     );
-}
+};
 
 const styles = StyleSheet.create({
     container: {

@@ -1,13 +1,33 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Alert, Modal } from 'react-native';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import ReorderableList, { reorderItems } from 'react-native-reorderable-list';
 import { useRouter } from 'expo-router';
+import LinkCard from '@/components/LinkCard';
 import { AuthContext } from '@/contexts/AuthContext';
 import { updateUserProfile } from '@/services/userService';
 import { useDarkMode } from '@/contexts/DarkModeContext';
 import { firestore } from '@/config/firebaseConfig';
 import { doc, getDoc } from 'firebase/firestore';
-import { clean } from 'react-native-image-crop-picker';
+import FloatingActionButton from '@/components/FloatingActionButton';
+
+const formatUrl = (url) => {
+    let cleanedUrl = url.trim();
+
+    if (!cleanedUrl.startsWith('http://') && !cleanedUrl.startsWith('https://')) {
+        cleanedUrl = 'https://' + cleanedUrl;
+    };
+
+    const knownDomains = ['facebook.com', 'instagram.com', 'linkedin.com', 'twitter.com', 'github.com'];
+    const domainOnly = cleanedUrl.replace(/https?:\/\//, ''); // Remove protocol for checking
+    
+    for (let domain of knownDomains) {
+        if (domainOnly.startsWith(domain) && !domainOnly.startsWith('www.')) {
+            cleanedUrl = cleanedUrl.replace(domain, 'www.' + domain);
+        }
+    }
+    return cleanedUrl;
+};
 
 const isValidUrl = (url) => {
     try {
@@ -18,12 +38,21 @@ const isValidUrl = (url) => {
     }
 };
 
+const socialBaseUrls = {
+    facebook: 'https://www.facebook.com/',
+    instagram: 'https://www.instagram.com/',
+    linkedin: 'https://www.linkedin.com/in/',
+    twitter: 'https://www.twitter.com/',
+    github: 'https://www.github.com/'
+};
+
 export default function EditAccountScreen() {
     const { user } = useContext(AuthContext);
     const router = useRouter();
     const { themeColors } = useDarkMode();
 
     const [links, setLinks] = useState([]);
+    const [pickerVisible, setPickerVisible] = useState(false);
 
     useEffect(() => {
         const fetchUserLinks = async () => {
@@ -36,6 +65,7 @@ export default function EditAccountScreen() {
                         setLinks(data.links || []);
                     } else {
                         console.log('User document does not exist');
+                        setLinks([]);
                     }
                 } catch (error) {
                     console.error('Error fetching user links:', error);
@@ -45,55 +75,38 @@ export default function EditAccountScreen() {
         fetchUserLinks();
     }, [user?.uid]);
 
-    const formatUrl = (url) => {
-        let cleanedUrl = url.trim();
-
-        if (!cleanedUrl.startsWith('http://') && !cleanedUrl.startsWith('https://')) {
-            cleanedUrl = 'https://' + cleanedUrl;
-        };
-
-        const knownDomains = ['facebook.com', 'instagram.com', 'linkedin.com', 'twitter.com'];
-        const domainOnly = cleanedUrl.replace(/https?:\/\//, ""); // Remove protocol for checking
-        
-        for (let domain of knownDomains) {
-            if (domainOnly.startsWith(domain) && !domainOnly.startsWith('www.')) {
-                cleanedUrl = cleanedUrl.replace(domain, 'www.' + domain);
-            }
-        }
-
-        return cleanedUrl;
-    }
 
     const handleChangeLink = (text, index) => {
         const newLinks = [...links];
-        newLinks[index] = formatUrl(text);
+        newLinks[index] = text;
         setLinks(newLinks);
     };
 
     const handleAddLink = () => {
         setLinks([...links, '']);
-    };
+    }
 
+    const openPicker =  () => setPickerVisible(true);
+    const closePicker =  () => setPickerVisible(false);
+
+    const handlePickerSelect = (option) => {
+        closePicker();
+        if (option === 'other') {
+            setLinks([...links, '']);
+        } else {
+            const prefill = socialBaseUrls[option] || '';
+            setLinks([...links, prefill]);
+        }
+    };
+    
     const handleRemoveLink = (index) => {
         const newLinks = links.filter((_, i) => i !== index);
         setLinks(newLinks);
     };
 
-    const handleMove = (index, direction) => {
-        const newLinks = [...links];
-        const targetIndex = direction === 'up' ? index - 1 : index + 1;
-
-        if (targetIndex < 0 || targetIndex >= newLinks.length) return;
-        
-        [newLinks[index], newLinks[targetIndex]] = [newLinks[targetIndex], newLinks[index]];
-
-        setLinks(newLinks);
-    };
-
     const handleSave = async () => {
-        const linkValues = links.map(link => link.trim());
-
-        for (const link of linkValues) {
+        const formattedLinks = links.map((link) => link.trim() ? formatUrl(link.trim()) : '');
+        for (const link of formattedLinks) {
             if (link && !isValidUrl(link)) {
                 Alert.alert('Invalid link', `Ensure all links start with "https://". Problematic link: ${link}`);
                 return;
@@ -101,7 +114,7 @@ export default function EditAccountScreen() {
         }
         try {
             await updateUserProfile(user.uid, { 
-                links: linkValues.filter(l => l !== '')
+                links: formattedLinks.filter(l => l !== '')
             });
             Alert.alert('Success', 'Links updated successfully');
             router.push('/auth/AccountSharingScreen');
@@ -111,49 +124,63 @@ export default function EditAccountScreen() {
         }
     };
 
+    const renderItem = ({ item, index, drag, isActive }) => (
+        <LinkCard
+            item={item}
+            index={index}
+            drag={drag}
+            isActive={isActive}
+            themeColors={themeColors}
+            onChangeText={handleChangeLink}
+            onRemove={handleRemoveLink}
+        />
+    );
+
     return (
         <View style={[styles.container, { backgroundColor: themeColors.background }]}>
             <Text style={[styles.title, { color: themeColors.text }]}>Edit your links</Text>
+            <TouchableOpacity onPress={handleSave}>
+                <MaterialIcons name='save' size={36} color={ themeColors.text }/>
+            </TouchableOpacity>
 
-            <FlatList
+            <ReorderableList
                 data={links}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item, index }) => (
-                    <View style={styles.linkRow}>
-                        <View style={styles.controlsContainer}>
-                            <TouchableOpacity onPress={() => handleMove(index, 'up')} disabled={index === 0}>
-                                <MaterialIcons name='arrow-upward' size={24} color={index === 0 ? themeColors.background : themeColors.text} />
-                            </TouchableOpacity>
-
-                            <TouchableOpacity onPress={() => handleMove(index, 'down')} disabled={index === links.length - 1}>
-                                <MaterialIcons name='arrow-downward' size={24} color={index === index.length - 1 ? themeColors.red : themeColors.text} />
-                            </TouchableOpacity>
-                        </View>
-                        <TextInput
-                            style={[styles.input, { color: themeColors.text, borderColor: themeColors.accent, textAlign: 'center' }]}
-                            placeholder='https://www.example.com'
-                            placeholderTextColor={themeColors.text}
-                            value={item}
-                            onChangeText={(text) => handleChangeLink(text, index)}
-                        />
-                        <TouchableOpacity style={[styles.removeButton, { backgroundColor: themeColors.red }]} onPress={() => handleRemoveLink(index)}>
-                            <Text style={[styles.removeButtonText, { color: themeColors.text }]}>Remove</Text>
-                        </TouchableOpacity>
-                    </View>
-                )}
+                renderItem={renderItem}
+                onReorder={(fromIndex, toIndex) => {setLinks(prevLinks => reorderItems(prevLinks, fromIndex, toIndex));}}
+                keyboardShouldPersistTap='handled'
+                style={styles.reorderableList}
             />
 
-            <View style={styles.footer}>
-                <TouchableOpacity style={[styles.button, { backgroundColor: themeColors.accent }]} onPress={handleAddLink}>
-                    <Text style={[styles.buttonText, { color: themeColors.text }]}>Add another Link</Text>
-                </TouchableOpacity>
+            <Modal
+                visible={pickerVisible}
+                transparent
+                animationType='slide'
+                onRequestClose={closePicker}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={[styles.modalContainer, { backgroundColor: themeColors.background }]}>
+                        <Text style={[styles.modalTitle, { color: themeColors.text }]}>Select a Platform</Text>
+                        {Object.keys(socialBaseUrls).map((platform) => (
+                            <TouchableOpacity key={platform} style={styles.modalOption} onPress={() => handlePickerSelect(platform)}>
+                                <Text style={[styles.modalOptionText, { color: themeColors.text }]}>{platform.charAt(0).toUpperCase() + platform.slice(1)}</Text>
+                            </TouchableOpacity>
+                        ))}
+                        <TouchableOpacity style={styles.modalOption} onPress={() => handlePickerSelect('other')}>
+                            <Text style={[styles.modalOptionText, { color: themeColors.text }]}>Other</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.modalCloseButton} onPress={closePicker}>
+                            <Text style={[styles.modalCloseButtonText, { color: themeColors.text }]}>Cancel</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
 
-                <TouchableOpacity style={[styles.button, { backgroundColor: themeColors.accent }]} onPress={handleSave}>
-                    <Text style={[styles.buttonText, { color: themeColors.text }]}>Save Links</Text>
-                </TouchableOpacity>
-            </View>
+            <FloatingActionButton
+                onAddManualLink={handleAddLink}
+                openPicker={openPicker}
+            />
         </View>
-    )
+    );
 };
 
 
@@ -165,48 +192,59 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 28,
         fontWeight: 'bold',
-        marginBottom: 20
+        marginBottom: 20,
+        textAlign: 'center'
     },
-    linkRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 10,
-        gap: 8
-    },
-    controlsContainer: {
-        gap: 4,
-    },
-    input: {
-        flex: 1,
-        height: '100%',
-        borderWidth: 2,
-        borderRadius: 8,
-        fontSize: 16
+    reorderableList: {
+        flex: 1
     },
     button: {
         marginVertical: 10,
-
         paddingVertical: 15,
-        paddingHorizontal: 30,
+        paddingHorizontal: 20,
         borderRadius: 25,
         width: '60%',
         alignItems: 'center'
     },
-    removeButton: {
-        padding: 8,
-        borderRadius: 5
-    },
-    removeButtonText: {
-        fontSize: 14,
-        fontWeight: '600'
-    },
     buttonText: {
         fontSize: 16,
-        fontWeight: '600'
+        fontWeight: '600',
+        textAlign: 'center'
     },
-    footer: {
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        justifyContent: 'flex-end'
+    },
+    modalContainer: {
         padding: 20,
-        bottom: 20,
-        alignItems: 'center'
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20
+    },
+    modalTitle: {
+        fontSize: 20,
+        marginBottom: 10,
+        textAlign: 'center'
+    },
+    modalOption: {
+        paddingVertical: 15,
+        borderBottomWidth: 1,
+        borderBottomColor: '#CCC'
+    },
+    modalOptionText: {
+        fontSize: 18,
+        textAlign: 'center'
+    },
+    modalCloseButton: {
+        marginTop: 10,
+        paddingVertical: 15,
+        paddingHorizontal: 30,
+        borderRadius: 25,
+        alignItems: 'center',
+        backgroundColor: '#CCC'
+    },
+    modalCloseButtonText: {
+        fontSize: 16,
+        fontWeight: '600'
     }
 });

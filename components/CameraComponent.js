@@ -5,6 +5,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { CameraType } from 'expo-image-picker';
 import { useDarkMode } from '@/contexts/DarkModeContext';
 
+// Component currently unused 
+
 const CameraComponent = ({ onCapture }) => {
     const { themeColors } = useDarkMode(); 
     const [permission, requestPermission] = useCameraPermissions();
@@ -32,7 +34,7 @@ const CameraComponent = ({ onCapture }) => {
 
     const toggleCameraFacing = () => {
         setFacing(current => (current === 'back' ? 'front' : 'back' ));
-    }
+    };
 
     return (
         <View style={styles.container}>

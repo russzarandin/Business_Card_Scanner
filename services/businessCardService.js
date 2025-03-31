@@ -9,7 +9,7 @@ export async function saveBusinessCard(cardData) {
     const userCardsRef = collection(firestore, 'users', user.uid, 'businessCards');
     cardData.timestamp = cardData.timestamp || new Date().toISOString();
     return await addDoc(userCardsRef, cardData);
-}
+};
 
 export function subscribeToBusinessCards(callback) {
     const user = auth.currentUser;

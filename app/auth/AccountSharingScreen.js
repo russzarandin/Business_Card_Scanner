@@ -1,12 +1,31 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Text, View, TouchableOpacity, StyleSheet, ActivityIndicator, Linking, Alert} from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useDarkMode } from '@/contexts/DarkModeContext';
 import { AuthContext } from '@/contexts/AuthContext';
 import { useRouter } from 'expo-router';
 import { writeNFCTag } from '@/services/nfcService';
 import { firestore } from '@/config/firebaseConfig';
 import { doc, getDoc } from 'firebase/firestore';
+
+const socialIcons = {
+    'facebook.com': 'facebook',
+    'instagram.com': 'instagram',
+    'linkedin.com': 'linkedin',
+    'twitter.com': 'twitter',
+    'github.com': 'github',
+    'youtube.com': 'youtube'
+};
+
+const getPlatformIcon = (url) => {
+    try {
+        const hostname = new URL(url).hostname.replace(/^www\./, '');
+        return socialIcons[hostname] || null;
+    } catch (error) {
+        return null
+    }
+};
 
 export default function AccountSharingScreen() {
     const { user } = useContext(AuthContext);
@@ -50,9 +69,9 @@ export default function AccountSharingScreen() {
         }
     };
 
+
     return (
         <View style={[styles.container, { backgroundColor: themeColors.background }]}>
-            <Text style={[styles.title, { color: themeColors.text }]}></Text>
 
             <View style={styles.qrContainer}>
                 <QRCode 
@@ -63,18 +82,27 @@ export default function AccountSharingScreen() {
                 />
             </View>
 
-            {/* <Text style={[styles.profileUrl, { color: themeColors.text }]}>{profileUrl}</Text> */}
-
             <Text style={[styles.sectionTitle, { color: themeColors.text }]}>My Links</Text>
             
             {loading ? (
                 <ActivityIndicator size='large' color={ themeColors.accent } />
             ): links.length > 0 ? (
-                links.map((link, index) => (
-                    <TouchableOpacity key={index} onPress={() => Linking.openURL(link)}>
-                        <Text style={[styles.link, { color: themeColors.accent }]}>{link}</Text>
-                    </TouchableOpacity>
-                ))
+                links.map((link, index) => {
+                    const iconName = getPlatformIcon(link);
+                    return (
+                        <TouchableOpacity key={index} onPress={() => Linking.openURL(link)} style={styles.linkRow}>
+                            {iconName && (
+                                <MaterialCommunityIcons
+                                    name={iconName}
+                                    size={24}
+                                    color={themeColors.text}
+                                    style={styles.icon}
+                                />
+                            )}
+                            <Text style={[styles.link, { color: themeColors.accent }]}>{link}</Text>
+                        </TouchableOpacity>
+                    )
+                })
             ) : (
                 <Text style={{ color: themeColors.text }}>No links available</Text>
             )}
@@ -87,7 +115,7 @@ export default function AccountSharingScreen() {
                 <Text style={[styles.buttonText, { color: themeColors.text }]}>Edit Links</Text>
             </TouchableOpacity>
         </View>
-    )
+    );
 };
 
 
@@ -97,9 +125,22 @@ const styles = StyleSheet.create({
         height: '100%',
         padding: 20
     },
-    titleText: {
-        fontSize: 28,
-        marginBottom: 20
+    qrContainer: {
+        marginVertical: 20
+    },
+    sectionTitle: {
+        fontSize: 20,
+        marginBottom: 10
+    },
+    linkRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 8,
+        width: '100%'
+    },
+    icon: {
+        marginRight: 10
     },
     text: {
         fontSize: 16,
@@ -117,11 +158,9 @@ const styles = StyleSheet.create({
         fontSize: 16,
         letterSpacing: 0.5
     },
-    qrContainer: {
-        marginVertical: 20
-    },
     link: {
+        fontSize: 16,
         textAlign: 'center',
-        textDecorationLine: 'underline'
+        textDecorationLine: 'underline',
     }
-})
+});

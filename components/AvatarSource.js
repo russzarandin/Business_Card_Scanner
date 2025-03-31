@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Image, ActivityIndicator, StyleSheet } from 'react-native';
-import { defineAnimation } from 'react-native-reanimated';
 import { SvgXml } from 'react-native-svg';
 
 const AvatarDisplay = ({ uri, style }) => {

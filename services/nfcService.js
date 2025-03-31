@@ -1,4 +1,4 @@
-import NfcManager, { NfcTech, Ndef} from 'react-native-nfc-manager';
+import NfcManager, { NfcTech, Ndef } from 'react-native-nfc-manager';
 
 export async function initNFC() {
     try{
@@ -11,7 +11,7 @@ export async function initNFC() {
     } catch (error) {
         console.error('Error writing NFC tag', error);
     }
-}
+};
 
 export async function writeNFCTag(payload) {
     try {
@@ -25,7 +25,7 @@ export async function writeNFCTag(payload) {
     } finally {
         NfcManager.cancelTechnologyRequest();
     }
-}
+};
 
 export async function readNFCTag() {
     try {

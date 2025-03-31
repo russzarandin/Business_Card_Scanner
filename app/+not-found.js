@@ -16,7 +16,7 @@ export default function NotFoundScreen() {
       </ThemedView>
     </>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {

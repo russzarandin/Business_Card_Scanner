@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { Text, Image, View, ActivityIndicator, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { Text, View, ActivityIndicator, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { useRouter } from 'expo-router';
 import { AuthContext } from '@/contexts/AuthContext';

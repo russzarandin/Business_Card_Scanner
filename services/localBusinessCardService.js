@@ -14,7 +14,7 @@ export async function saveLocalBusinessCard(card) {
     } catch (error) {
         console.error('Error saving local business card:', error)
     }
-}
+};
 
 
 // Retrieve all local scanned business cards
@@ -26,7 +26,7 @@ export async function getLocalBusinessCards() {
         console.error('Error retrieving local business cards:', error);
         return [];
     }
-}
+};
 
 export async function clearLocalBusinessCards() {
     try {
@@ -35,4 +35,4 @@ export async function clearLocalBusinessCards() {
     } catch (error) {
         console.error('Error clearing local business cards:', error);
     }
-}
+};

@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { View, Switch, StyleSheet, TouchableOpacity, Alert, Image } from 'react-native';
+import { View, Switch, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useDarkMode } from '@/contexts/DarkModeContext';
@@ -88,7 +88,7 @@ export default function SettingsScreen() {
       </ThemedView>
     </ParallaxScrollView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {

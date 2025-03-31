@@ -6,7 +6,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
-
+import * as Linking from 'expo-linking';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { DarkModeProvider } from '../contexts/DarkModeContext';
 import { AuthProvider } from '@/contexts/AuthContext';
@@ -45,4 +45,4 @@ export default function RootLayout() {
       </GestureHandlerRootView>
     </DarkModeProvider>
   );
-}
+};
