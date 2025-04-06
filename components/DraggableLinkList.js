@@ -5,29 +5,27 @@ import LinkCardItem from './LinkCardItem';
 
 const DraggableLinkList = ({ links, onChange, themeColors }) => {
     
-    const handlers = useRef({
-        onChangeText: (id, text) => {
-            const newLinks = links.map(link => {
-                return link.id === id ? { ...link, url: text } : link
-            });
+    const handleChangeText = (id, text) => {
+        const newLinks = links.map(link => {
+            return link.id === id ? { ...link, url: text } : link
+        });
+    onChange(newLinks);
+    };
+
+    const handleRemove = (id) => {
+        const newLinks = links.filter(link => link.id !== id);
         onChange(newLinks);
-        },
+    };
 
-        onRemove: (id) => {
-            const newLinks = links.filter(link => link.id !== id);
-            onChange(newLinks);
-        },
-
-        onDragEnd: ({ data }) => {
-            onChange(data);
-        }
-    }).current;
+    const handleDragEnd = ({ data }) => {
+        onChange(data);
+    };
 
     const renderItem = ({ item, drag, isActive }) => (
         <LinkCardItem
             link={item}
-            onChangeText={(text) => handlers.onChangeText(item.id, text)}
-            onRemove={() => handlers.onRemove(item.id)}
+            onChangeText={(text) => handleChangeText(item.id, text)}
+            onRemove={() => handleRemove(item.id)}
             onDrag={drag}
             isActive={isActive}
             themeColors={themeColors}
@@ -40,7 +38,7 @@ const DraggableLinkList = ({ links, onChange, themeColors }) => {
                 data={links}
                 renderItem={renderItem}
                 keyExtractor={(item) => item.id}
-                onDragEnd={handlers.onDragEnd}
+                onDragEnd={handleDragEnd}
                 contentContainerStyle={styles.listContent}
             />
         </View>
