@@ -42,9 +42,9 @@ export default function AccountSharingScreen() {
             if (user?.uid) {
                 try {
                     const userDocRef = doc(firestore, 'users', user.uid);
-                    const userSnap = await getDoc(userDocRef);
-                    if (userSnap.exists()) {
-                        const userData = userSnap.data();
+                    const userLinks = await getDoc(userDocRef);
+                    if (userLinks.exists()) {
+                        const userData = userLinks.data();
                         setLinks(userData.links || []);
                     } else {
                         console.log('User document does not exist');

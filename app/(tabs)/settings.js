@@ -1,17 +1,38 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState, useCallback } from 'react';
 import { View, Switch, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
 import { useDarkMode } from '@/contexts/DarkModeContext';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { AuthContext } from '@/contexts/AuthContext';
-import { useRouter } from 'expo-router';
-import AvatarDisplay from '@/components/AvatarSource';
+import { useRouter, useFocusEffect } from 'expo-router';
+import DisplayAvatar from '@/components/DisplayAvatar';
+import { getUserAvatar } from '@/services/userService';
+import dataUri, { generateAvatar, defaultAvatarOptions } from '@/config/avatarConfig';
 
 export default function SettingsScreen() {
   const { isDarkMode, toggleDarkMode, useSystemTheme, toggleSystemTheme, themeColors } = useDarkMode();
   const { user, signOut } = useContext(AuthContext);
   const router = useRouter();
+  const [avatarUri, setAvatarUri] = useState(null);
+
+  const fetchAvatar = useCallback(async () => {
+    if (!user?.uid) return;
+    try {
+      let avatarUrl = await getUserAvatar(user.uid);
+      if (!avatarUrl) {
+        const options = { seed: user.uid || 'default' };
+        avatarUrl = defaultAvatarOptions()
+      }
+      setAvatarUri(avatarUrl);
+    } catch (error) {
+      console.error('Error fetching avatar:', error);
+    }
+  }, [user?.uid]);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchAvatar();
+    }, [fetchAvatar])
+  );
 
   const handleSignOut = async () => {
     try {
@@ -20,15 +41,14 @@ export default function SettingsScreen() {
     } catch (error) {
       Alert.alert('Error signing out', error.message);
     }
-  }
+  };
 
-  const handleEditAvatar = () => {
-    router.push('/auth/AvatarCreator');
-  }
+  const handleEditAvatar = () =>  {
+    router.push('/auth/AvatarCreatorScreen');
+  };
 
   return (
-    <ParallaxScrollView headerBackgroundColor={ themeColors.background }>
-      <ThemedView style={[styles.container, { backgroundColor: themeColors.background }]}>
+      <View style={[styles.container, { backgroundColor: themeColors.background }]}>
         <ThemedText style={{ color: themeColors.text }} type='title'>Settings</ThemedText>
         <ThemedText style={{ color: themeColors.text }} type='subtitle'>Theme Settings</ThemedText>
 
@@ -52,10 +72,10 @@ export default function SettingsScreen() {
               </ThemedText>
 
               <TouchableOpacity onPress={handleEditAvatar}>
-                {user.photoURL ? (
-                  <AvatarDisplay uri={ user.photoURL } style={styles.avatar} />
-                ) : (
-                  <AvatarDisplay source={require('@/assets/images/placeholder.png')} style={styles.avatar} />
+                {avatarUri ? (
+                  <DisplayAvatar uri={avatarUri} style={[styles.avatar, { borderColor: themeColors.text, color: themeColors.text }]} />
+                ) : ( 
+                  <DisplayAvatar source={require('@/assets/images/placeholder.png')} style={[styles.avatar, { borderColor: themeColors.text, tintColor: themeColors.text }]} />
                 )}
               </TouchableOpacity>
             </View>
@@ -65,9 +85,7 @@ export default function SettingsScreen() {
             </TouchableOpacity>
 
             <TouchableOpacity style={[styles.authButton, { backgroundColor: themeColors.accent }]} onPress={() => router.push('/auth/AccountSharingScreen')}>
-              <ThemedText style={{ color: themeColors.text }} type='button'>
-                Display account information
-              </ThemedText>
+              <ThemedText style={{ color: themeColors.text }} type='button'>Display account information</ThemedText>
             </TouchableOpacity>
           </>
         ) : (
@@ -85,15 +103,16 @@ export default function SettingsScreen() {
             </TouchableOpacity>
           </>
         )}
-      </ThemedView>
-    </ParallaxScrollView>
+      </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20
+    padding: 20,
+    marginVertical: 20,
+    marginHorizontal: 10
   },
   settingItem: {
     flexDirection: 'row',
@@ -106,10 +125,10 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   avatar: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    marginVertical: 10
+    width: 150,
+    height: 150,
+    borderRadius: 150,
+    borderWidth: 2,
   },
   signOutButton: {
     paddingVertical: 12,

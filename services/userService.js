@@ -1,5 +1,5 @@
 import { firestore, auth } from '@/config/firebaseConfig';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { updateProfile } from 'firebase/auth';
 
 export const updateUserAvatar = async (userId, avatarUrl) => {
@@ -12,6 +12,22 @@ export const updateUserAvatar = async (userId, avatarUrl) => {
     } catch (error) {
         console.error('Error updating user avatar', error);
         throw error;
+    }
+};
+
+export const getUserAvatar = async (userId) => {
+    try {
+        const userDocRef = doc(firestore, 'users', userId);
+        const userDoc = await getDoc(userDocRef);   
+        if (userDoc.exists()) {
+            return userDoc.data().avatarUrl || null;
+        } else {
+            console.warn('User profile icon not found');
+            return null;
+        }
+    } catch (error) {
+        console.error('Error fetching user avatar', error);
+        return null;
     }
 };
 
