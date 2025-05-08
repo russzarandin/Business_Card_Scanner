@@ -1,6 +1,10 @@
-# Welcome to your Expo app 👋
+# Welcome to the Business Card Scanner Application
 
+<<<<<<< HEAD
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app). This is primarily targeted towards Android devices so it may not work as expected with iOS devices.
+=======
+This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app). This is primarily targeted towards android devices so it may not work as expected with iOS devices.
+>>>>>>> 05d6c9268cfc3b81eea9a9fc3787560500246218
 
 ## Get started
 
@@ -15,11 +19,19 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
    ```bash
     npx expo run:android
    ```
+<<<<<<< HEAD
    
    or
 
    ```bash
     npx expo run:ios
+=======
+
+   or
+
+   ```bash
+   npx expo run:ios
+>>>>>>> 05d6c9268cfc3b81eea9a9fc3787560500246218
    ```
 
 In the output, you'll find options to open the app in a
