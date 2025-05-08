@@ -1,11 +1,14 @@
+/**
+ *  @fileoverview Component responsible for displaying the camera component in the index.js screen/home screen
+ *  currently unused
+ */
+
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Button } from 'react-native';
 import { CameraView, useCameraPermissions, requestCameraPermissionsAsync } from 'expo-camera';
 import { Ionicons } from '@expo/vector-icons';
 import { CameraType } from 'expo-image-picker';
 import { useDarkMode } from '@/contexts/DarkModeContext';
-
-// Component currently unused 
 
 const CameraComponent = ({ onCapture }) => {
     const { themeColors } = useDarkMode(); 

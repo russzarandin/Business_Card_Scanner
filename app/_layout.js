@@ -5,8 +5,8 @@ import * as SplashScreen from 'expo-splash-screen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
-import 'react-native-reanimated';
 import * as Linking from 'expo-linking';
+import 'react-native-reanimated';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { DarkModeProvider } from '../contexts/DarkModeContext';
 import { AuthProvider } from '@/contexts/AuthContext';
@@ -15,34 +15,64 @@ import { AuthProvider } from '@/contexts/AuthContext';
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
+	const colorScheme = useColorScheme();
+	const [loaded] = useFonts({
+	SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+	});
 
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
+	useEffect(() => {
+		if (loaded) {
+			SplashScreen.hideAsync();
+		}
+	}, [loaded]);
 
-  if (!loaded) {
-    return null;
-  }
+	useEffect(() => {
+		const handleDeepLink = (event) => {
+			const { path, queryParams } = Linking.parse(event.url);
+			console.log('Deep link received:', path, queryParams);
 
-  return (
-    <DarkModeProvider>
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <AuthProvider>
-          <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-            <Stack>
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen name="+not-found" />
-            </Stack>
-            <StatusBar style="auto" />
-          </ThemeProvider>
-        </AuthProvider>
-      </GestureHandlerRootView>
-    </DarkModeProvider>
-  );
+			if (path === 'profile' && queryParams.userId) {
+				console.log('Navigating to profile:', queryParams.userId);
+			}
+		};
+
+		Linking.addEventListener('url', handleDeepLink);
+
+		Linking.getInitialURL().then(url => {
+			if (url) {
+				handleDeepLink({ url });
+			}
+		});
+
+		return () => {
+			Linking.removeEventListener('url', handleDeepLink)
+		}
+	}, [])
+
+	if (!loaded) {
+		return null;
+	}
+
+	return (
+		<DarkModeProvider>
+			<GestureHandlerRootView style={{ flex: 1 }}>
+				<AuthProvider>
+					<ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme }>
+						<Stack>
+							<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+							<Stack.Screen name="+not-found" />
+							<Stack.Screen
+								name='profile/[userId]'
+								options={{
+									title: 'Profile',
+									presentation: 'modal'
+								}}
+							/>
+						</Stack>
+						<StatusBar style="auto" />
+					</ThemeProvider>
+				</AuthProvider>
+			</GestureHandlerRootView>
+		</DarkModeProvider>
+	);
 };

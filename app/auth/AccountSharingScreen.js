@@ -1,13 +1,14 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Text, View, TouchableOpacity, StyleSheet, ActivityIndicator, Linking, Alert} from 'react-native';
+import { Text, View, TouchableOpacity, StyleSheet, ActivityIndicator, Linking, Alert } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useDarkMode } from '@/contexts/DarkModeContext';
 import { AuthContext } from '@/contexts/AuthContext';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { writeNFCTag } from '@/services/nfcService';
 import { firestore } from '@/config/firebaseConfig';
 import { doc, getDoc } from 'firebase/firestore';
+
 
 const socialIcons = {
     'facebook.com': 'facebook',
@@ -27,41 +28,56 @@ const getPlatformIcon = (url) => {
     }
 };
 
-export default function AccountSharingScreen() {
+export default function AccountSharingScreen({ userId: propUserId }) {
     const { user } = useContext(AuthContext);
     const { themeColors } = useDarkMode();
     const router = useRouter();
+    const params = useLocalSearchParams();
     
     const [links, setLinks] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [profileUser, setProfileUser] = useState(null);
+    const [isCurrentUser, setIsCurrentUser] = useState(false);
 
-    const profileUrl = user?.profileUrl || `https://ar-ai-app-v1.firebaseapp.com/profile/${user?.uid}`;
+    const userId = propUserId || params.userId || user?.uid;
+    const profileUrl = `ai-ar-business-card://profile/${userId}`;
 
     useEffect(() => {
         const fetchUserProfile = async () => {
-            if (user?.uid) {
-                try {
-                    const userDocRef = doc(firestore, 'users', user.uid);
-                    const userLinks = await getDoc(userDocRef);
-                    if (userLinks.exists()) {
-                        const userData = userLinks.data();
-                        setLinks(userData.links || []);
-                    } else {
-                        console.log('User document does not exist');
-                        setLinks([]);
-                    }
-                } catch (error) {
-                    console.error('Error fetching user profile:', error);
-                }
+            if (!userId) {
+                setLoading(false);
+                return;
             }
-            setLoading(false);
+
+            try {
+                const userDocRef = doc(firestore, 'users', userId);
+                const userDoc = await getDoc(userDocRef);
+
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    setProfileUser(userData);
+                    setLinks(userData.links || []);
+                    setIsCurrentUser(user?.uid === userId);
+                } else {
+                    console.log('User document does not exist');
+                    setLinks([]);
+                    Alert.alert('Error', 'User profile not found');
+                    router.back();
+                }
+            } catch (error) {
+                console.error('Error fetching user profile:', error);
+                Alert.alert('Error', 'Failed to load profile');
+            } finally {
+                setLoading(false);
+            }
         };
+
         fetchUserProfile();
-    }, [user?.uid]);
+    }, [userId, user?.uid])
 
     const handleNfcWrite = async () => {
         try {
-            await writeNFCTag(profileUrl);
+            await writeNFCTag(userId);
             Alert.alert('Success', 'NFC tag written successfully');
         } catch (error) {
             console.error('NFC write error:', error);
@@ -72,6 +88,7 @@ export default function AccountSharingScreen() {
 
     return (
         <View style={[styles.container, { backgroundColor: themeColors.background }]}>
+            <Text style={[styles.sectionTitle, { color: themeColors.text }]}>{isCurrentUser ? 'My Profile' : `${profileUser?.displayName || 'User'}'s Profile`}</Text>
 
             <View style={styles.qrContainer}>
                 <QRCode 
@@ -82,7 +99,7 @@ export default function AccountSharingScreen() {
                 />
             </View>
 
-            <Text style={[styles.sectionTitle, { color: themeColors.text }]}>My Links</Text>
+            <Text style={[styles.sectionTitle, { color: themeColors.text }]}>{isCurrentUser ? 'My Links' : 'Links'}</Text>
             
             {loading ? (
                 <ActivityIndicator size='large' color={ themeColors.accent } />
@@ -104,16 +121,20 @@ export default function AccountSharingScreen() {
                     )
                 })
             ) : (
-                <Text style={{ color: themeColors.text }}>No links available</Text>
+                <Text style={{ color: themeColors.text }}>{isCurrentUser ? 'No links available' : 'User has no links'}</Text>
             )}
 
-            <TouchableOpacity style={[styles.button, {backgroundColor: themeColors.accent}]} onPress={handleNfcWrite}>
-                <Text style={[styles.buttonText, { color: themeColors.text}]}> Share via NFC</Text>
-            </TouchableOpacity>
+            {isCurrentUser && (
+                <>
+                    <TouchableOpacity style={[styles.button, {backgroundColor: themeColors.accent}]} onPress={handleNfcWrite}>
+                        <Text style={[styles.buttonText, { color: themeColors.text}]}> Share via NFC</Text>
+                    </TouchableOpacity>
 
-            <TouchableOpacity style={[styles.button, { backgroundColor: themeColors.accent }]} onPress={() => router.push('/auth/EditAccountScreen')}>
-                <Text style={[styles.buttonText, { color: themeColors.text }]}>Edit Links</Text>
-            </TouchableOpacity>
+                    <TouchableOpacity style={[styles.button, { backgroundColor: themeColors.accent }]} onPress={() => router.push('/auth/EditAccountScreen')}>
+                        <Text style={[styles.buttonText, { color: themeColors.text }]}>Edit Links</Text>
+                    </TouchableOpacity>
+                </>
+            )}
         </View>
     );
 };

@@ -7,7 +7,10 @@
     "icon": "./assets/images/icon.png",
     "scheme": "ai-ar-business-card",
     "deeplinks": [
-      "ai-ar-business-card://"
+      {
+        "scheme": "ai-ar-business-card",
+        "host": "profile"
+      }
     ],
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -24,7 +27,7 @@
       "compileSdkVersion": 33,
       "permissions": [
         "android.permission.NFC",
-        "android.permission.NFC"
+        "android.permission.CAMERA"
       ],
       "intentFilters": [
         {
@@ -32,11 +35,22 @@
           "data": [
             {
               "scheme": "ai-ar-business-card",
-              "host": "profile"
+              "host": "profile",
+              "pathPrefix": "/"
             }
           ],
           "category": [
             "BROWSABLE",
+            "DEFAULT"
+          ]
+        },
+        {
+          "action": "android.nfc.action.NDEF_DISCOVERED",
+          "data": {
+            "scheme": "ai-ar-business-card",
+            "host": "profile"
+          },
+          "category": [
             "DEFAULT"
           ]
         }
@@ -58,7 +72,8 @@
           "backgroundColor": "#ffffff"
         }
       ],
-      "react-native-nfc-manager"
+      "react-native-nfc-manager",
+      "expo-asset"
     ],
     "experiments": {
       "typedRoutes": true

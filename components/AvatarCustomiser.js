@@ -1,70 +1,124 @@
-import React, { useState, useEffect } from 'react';
-import { View, Image, Button, TextInput, ScrollView } from 'react-native';
-import { updateUserAvatar } from '@/services/userService';
-import { generateAvatar } from '@/config/avatarConfig';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import DisplayAvatar from './DisplayAvatar';
 
-const AvatarCustomiser = ({ userId, onAvatarChange }) => {
-    const [avatarOptions, setAvatarOptions] = useState({
-        seed: 'default',
-        flip: false,
-        backgroundColor: ['b6e3f4'],
-        backgroundType: ['solid'],
-        accessories: ['none'],
-        accessoriesColor: ['000000'],
-        clothing: ['shirtCrewNeck'],
-        clothesColor: ['0000FF'],
-        eyebrows: ['default'],
-        eyes: ['default'],
-        facialHair: ['none'],
-        facialHairColor: ['000000'],
-        hairColor: ['000000'],
-        hatColor: ['808080'],
-        mouth: ['default'],
-        nose: ['default'],
-        top: ['shortHair'],
-        skinColor: ['FAD782']
-        // Change the color from words to hexcodes
-    });
+const avatarOptionChoices = {
+    top: [
+        { value: 'hat', label: 'Hat' },
+        { value: 'hijab', label: 'Hijab' },
+        { value: 'turban', label: 'Turban' }
+    ],
+    hairColor: [
+        { value: 'a55728', label: 'Auburn' },
+        { value: 'b58143', label: 'Brown' },
+        { value: '000000', label: 'Black' }
+    ],
+    facialHair: [
+        { value: 'beardMajestic', label: 'Majestic Beard' },
+        { value: 'beardMedium', label: 'Medium Beard' },
+        { value: 'none', label: 'None' }
+    ],
+    eyes: [
+        { value: 'default', label: 'Default' },
+        { value: 'happy', label: 'Happy' },
+        { value: 'wink', label: 'Wink' }
+    ]
+};
 
-    const [avatarUri, setAvatarUri] = useState('');
+const AvatarCustomiser = ({ avatarOptions, setAvatarOptions, onSave, currentAvatarUrl, generateRandomSeed, themeColors, options, setOptions }) => {
+    const [activeCategory, setActiveCategory] = useState('top');
 
-    useEffect(() => {
-        setAvatarUri(generateAvatar(avatarOptions));
-    }, [avatarOptions]);
-
-    const saveAvatarToFirestore = async () => {
-        if (!userId || !avatarUri) return;
-        try {
-            await updateUserAvatar(userId, avatarUri);
-            console.log('Avatar saved successfully');
-        } catch (error) {
-            console.error('Error saving avatar', error);
-        }
+    const handleOptionChange = (category, value) => {
+        setAvatarOptions(prev => ({
+            ...prev,
+            [category]: value
+        }));
     };
 
     return (
-        <View>
-            {avatarUri && (
-            <Image
-                source={{ uri: avatarUri }}
-                style={{ width : 100, height: 100 }}
-            />
-            )}
+        <ScrollView 
+            style={styles.container}
+            contentContainerStyle={styles.contentContainer}
+        >
+            {Object.entries(avatarOptionChoices).map(([category, choices]) => (
+                <View key={category} style={styles.optionGroup}>
+                    <Text style={[styles.categoryLabel, { color: themeColors.text }]}>
+                        {category.split(/(?=[A-Z])/).join(' ')}
+                    </Text>
+                    <View style={styles.choicesContainer}>
+                        {choices.map(({ value, label }) => (
+                            <TouchableOpacity
+                                key={value}
+                                onPress={() => handleOptionChange(category, value)}
+                                style={[
+                                    styles.choiceButton,
+                                    avatarOptions[category] === value && { 
+                                        backgroundColor: themeColors.accent 
+                                    }
+                                ]}
+                            >
+                                <Text style={[styles.choiceText, { color: themeColors.text }]}>
+                                    {label}
+                                </Text>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
+                </View>
+            ))}
 
-            <TextInput
-                placeholder='Enter seed'
-                value={avatarOptions.seed}
-                onChangeText={(text) => setAvatarOptions({ ...avatarOptions, seed: text })}
-                style={{
-                    borderWidth: 1,
-                    padding: 10,
-                    marginVertical: 10
-                }}
-            />
-
-            <Button title='Save Avatar' onPress={saveAvatarToFirestore} />
-        </View>
+            <TouchableOpacity 
+                style={[styles.saveButton, { backgroundColor: themeColors.primary }]}
+                onPress={onSave}
+            >
+                <Text style={[styles.saveButtonText, { color: themeColors.text }]}>
+                    Save Avatar
+                </Text>
+            </TouchableOpacity>
+        </ScrollView>
     );
 };
+
+
+const styles = StyleSheet.create({
+    container: {
+        width: '100%'
+    },
+    contentContainer: {
+        paddingBottom: 30
+    },
+    optionGroup: {
+        marginBottom: 20
+    },
+    categoryLabel: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginBottom: 10,
+        textTransform: 'capitalize'
+    },
+    choicesContainer: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: 10
+    },
+    choiceButton: {
+        paddingVertical: 8,
+        paddingHorizontal: 12,
+        borderRadius: 20,
+        borderWidth: 1
+    },
+    choiceText: {
+        fontSize: 14
+    },
+    saveButton: {
+        padding: 15,
+        borderRadius: 10,
+        alignItems: 'center',
+        marginTop: 20
+    },
+    saveButtonText: {
+        fontSize: 16,
+        fontWeight: 'bold'
+    }
+});
 
 export default AvatarCustomiser;

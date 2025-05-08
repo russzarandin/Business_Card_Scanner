@@ -1,5 +1,5 @@
 import { firestore, auth } from '@/config/firebaseConfig';
-import { collection, addDoc, query, orderBy, onSnapshot } from 'firebase/firestore';
+import { collection, addDoc, query, orderBy, onSnapshot, doc, updateDoc } from 'firebase/firestore';
 
 export async function saveBusinessCard(cardData) {
     const user = auth.currentUser;
@@ -26,3 +26,20 @@ export function subscribeToBusinessCards(callback) {
 
     return unsubscribe;
 };
+
+export async function getBusinessCardById(id) {
+    const docRef = doc(firestore, 'businessCards', id);
+    const docSnap = await getDoc(docRef);
+    return docSnap.exists() ? { id: docSnap.id, ...docSnap.data() } : null;
+}
+
+export async function updateBusinessCard(id, data) {
+    const user = auth.currentUser;
+    if (!user) {
+        throw new Error('User not logged in');
+
+    }
+
+    const docRef = doc(firestore, 'users', user.uid, 'businessCards', id);
+    await updateDoc(docRef, data);
+}
