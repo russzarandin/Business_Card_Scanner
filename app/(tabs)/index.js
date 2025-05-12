@@ -1,15 +1,15 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, PermissionsAndroid, Platform } from 'react-native';
 import { useOCR, DETECTOR_CRAFT_800, RECOGNIZER_EN_CRNN_128, RECOGNIZER_EN_CRNN_256, RECOGNIZER_EN_CRNN_512 } from 'react-native-executorch';
 import * as FileSystem from 'expo-file-system';
-
+import { launchCamera } from 'react-native-image-picker';
+import ImageCropPicker from 'react-native-image-crop-picker';
 import { extractContactInfo } from '@/utils/ocrProcessing';
 import { useDarkMode } from '@/contexts/DarkModeContext';
 import { saveBusinessCard } from '@/services/businessCardService';
 import { saveLocalBusinessCard } from '@/services/localBusinessCardService';
 import NetInfo from '@react-native-community/netinfo';
 import { AuthContext } from '@/contexts/AuthContext';
-import captureCropAndRecognizeText from 'react-native-ocr-scanner';
 
 export default function HomeScreen() {
     const { themeColors } = useDarkMode();
@@ -27,6 +27,70 @@ export default function HomeScreen() {
         language: 'en'
     });
 
+    const requestCameraPermission = async () => {
+        if (Platform.OS === 'android') {
+            const granted = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.CAMERA,
+                {
+                    title: 'Camera Permission',
+                    message: 'This app needs access to your camera to scan business cards.',
+                    buttonPositive: 'OK',
+                    buttonNegative: 'Cancel',
+                }
+            );
+            return granted === PermissionsAndroid.RESULTS.GRANTED;
+        }
+        return true;
+    };
+
+    const captureImage = async () => {
+        try {
+            const hasPermission = await requestCameraPermission();
+            if (!hasPermission) {
+                Alert.alert('Permission Denied', 'Camera permission is required to scan business cards.');
+                throw new Error('Camera permission not granted');
+            }
+
+            setProgress('Opening camera...');
+
+            const image = await new Promise((resolve, reject) => {
+                launchCamera({
+                    mediaType: 'photo',
+                    quality: 1,
+                    cameraType: 'back',
+                    includeBase64: false,
+                    saveToPhotos: false
+                }, (response) => {
+                    if (response.didCancel) {
+                        reject(new Error('Image capture cancelled'));
+                    } else if (response.errorCode) {
+                        reject(new Error(response.errorMessage || 'Camera error'));
+                    } else if (response.assets?.[0]?.uri) {
+                        resolve(response.assets[0]);
+                    } else {
+                        reject(new Error('No image captured'));
+                    }
+                });
+            });
+
+            setProgress('Cropping image...');
+
+            const croppedImage = await ImageCropPicker.openCropper({
+                path: image.uri,
+                width: 800,
+                height: 600,
+                cropping: true,
+                freeStyleCropEnabled: true,
+                mediaType: 'photo'
+            });
+
+            return { uri: croppedImage.path };
+        } catch (error) {
+            console.error('Image capture error:', error);
+            throw error;
+        }
+    };
+
     const handleScan = async () => {
         try {
             if (!model.isReady) {
@@ -36,7 +100,7 @@ export default function HomeScreen() {
 
             setProgress('Starting scan...');
 
-            const scanResult = await captureCropAndRecognizeText();
+            const scanResult = await captureImage();
 
             if (!scanResult?.uri) {
                 throw new Error('No image captured');
@@ -56,7 +120,6 @@ export default function HomeScreen() {
                 rawText: combinedText
             };
 
-            // Save results
             const netState = await NetInfo.fetch();
             if (!netState.isConnected || !user) {
                 await saveLocalBusinessCard(cardData);
@@ -73,14 +136,6 @@ export default function HomeScreen() {
             Alert.alert('Success', 'Business card scanned and saved successfully');
             setProgress('');
 
-            console.log('--- Structured Contact Info ---');
-            console.log('Name:', processedData.name);
-            console.log('Title:', processedData.title);
-            console.log('Company:', processedData.company);
-            console.log('Emails:', processedData.emails);
-            console.log('Phones:', processedData.phones``);
-            console.log('Websites:', processedData.websites);
-            console.log('Socials:', processedData.social);
         } catch (error) {
             console.error('Scan error:', error);
             Alert.alert('Error', 'Failed to scan or save the business card');
@@ -104,18 +159,6 @@ export default function HomeScreen() {
 
             {progress && (
                 <Text style={[styles.progressText, { color: themeColors.text }]}>{progress}</Text>
-            )}
-
-            {ocrResults && (
-                <View style={[styles.resultsContainer, { borderColor: themeColors.accent }]}>
-                    <Text style={[styles.sectionTitle, { color: themeColors.text }]}>Raw OCR Text:</Text>
-                    <Text style={[styles.resultText, { color: themeColors.text }]}>{ocrResults.rawText}</Text>
-                    
-                    <Text style={[styles.sectionTitle, { color: themeColors.text }]}>Extracted information:</Text>
-                    <Text style={[styles.resultText, { color: themeColors.text }]}>Name: {ocrResults.processedData.name || 'Not found'}</Text>
-                    <Text style={[styles.resultText, { color: themeColors.text }]}>Company: {ocrResults.processedData.company || 'Not found'}</Text>
-                    <Text style={[styles.resultText, { color: themeColors.text }]}>Emails: {ocrResults.processedData.emails.join(', ') || 'Not found'}</Text>
-                </View>
             )}
         </View>
     );
