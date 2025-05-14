@@ -27,8 +27,8 @@ export default function RootLayout() {
 	}, [loaded]);
 
 	useEffect(() => {
-		const handleDeepLink = (event) => {
-			const { path, queryParams } = Linking.parse(event.url);
+		const handleDeepLink = ({ url }) => {
+			const { path, queryParams } = Linking.parse(url);
 			console.log('Deep link received:', path, queryParams);
 
 			if (path === 'profile' && queryParams.userId) {
@@ -36,7 +36,7 @@ export default function RootLayout() {
 			}
 		};
 
-		Linking.addEventListener('url', handleDeepLink);
+		const subscription = Linking.addEventListener('url', handleDeepLink)
 
 		Linking.getInitialURL().then(url => {
 			if (url) {
@@ -45,9 +45,9 @@ export default function RootLayout() {
 		});
 
 		return () => {
-			Linking.removeEventListener('url', handleDeepLink)
-		}
-	}, [])
+			subscription.remove();
+		};
+	}, []);
 
 	if (!loaded) {
 		return null;

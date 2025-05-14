@@ -33,7 +33,7 @@ export default function AccountSharingScreen({ userId: propUserId }) {
     const { themeColors } = useDarkMode();
     const router = useRouter();
     const params = useLocalSearchParams();
-    
+
     const [links, setLinks] = useState([]);
     const [loading, setLoading] = useState(true);
     const [profileUser, setProfileUser] = useState(null);

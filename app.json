@@ -73,7 +73,14 @@
         }
       ],
       "react-native-nfc-manager",
-      "expo-asset"
+      "expo-asset",
+      ["react-native-vision-camera",
+        {
+          "cameraPermissionText": "$(This application) needs access to your Camera.",
+          "microphonePermissionText": "$(This application) needs access to your Microphone.",
+          "enableCodeScanner": true
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

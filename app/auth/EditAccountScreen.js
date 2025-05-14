@@ -9,6 +9,8 @@ import { doc, getDoc, setDoc } from 'firebase/firestore';
 import DraggableLinkList from '@/components/DraggableLinkList';
 
 
+const MAX_LINKS = 10;
+
 const socialBaseUrls = {
     facebook: 'https://www.facebook.com/',
     instagram: 'https://www.instagram.com/',
@@ -120,6 +122,7 @@ export default function EditAccountScreen() {
     };
     
     const handleAddLink = () => {
+        if (links.length >= MAX_LINKS) return;
         setLinks([...links, { id : `link-${Date.now()}`, url: ''}]);
     };
 
@@ -207,7 +210,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         marginTop: 16,
-        marginBottom: 20
+        marginBottom: 20,
+        paddingBottom: 20
     },
     addButton: {
         flexDirection: 'row',

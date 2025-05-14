@@ -94,23 +94,23 @@ export default function SettingsScreen() {
 						</TouchableOpacity>
 					</View>
 					
-					<TouchableOpacity style={[styles.signOutButton, { backgroundColor: themeColors.red }]} onPress={handleSignOut}>
+					<TouchableOpacity style={[styles.button, { backgroundColor: themeColors.red }]} onPress={handleSignOut}>
 						<ThemedText style={{ color: themeColors.text }} type='button'>Sign Out</ThemedText>
 					</TouchableOpacity>
 
-					<TouchableOpacity style={[styles.authButton, { backgroundColor: themeColors.accent }]} onPress={() => router.push('/auth/AccountSharingScreen')}>
+					<TouchableOpacity style={[styles.button, { backgroundColor: themeColors.accent }]} onPress={() => router.push('/auth/AccountSharingScreen')}>
 						<ThemedText style={{ color: themeColors.text }} type='button'>Display account information</ThemedText>
 					</TouchableOpacity>
 				</>
 			) : (
 				<>
-					<TouchableOpacity style={[styles.authButton, { backgroundColor: themeColors.accent }]} onPress={() => router.push('/auth/LoginScreen')}>
+					<TouchableOpacity style={[styles.button, { backgroundColor: themeColors.accent }]} onPress={() => router.push('/auth/LoginScreen')}>
 						<ThemedText style={{ color: themeColors.text }} type='button'>
 							Login
 						</ThemedText>
 					</TouchableOpacity>
 
-					<TouchableOpacity style={[styles.authButton, { backgroundColor: themeColors.accent }]} onPress={() => router.push('/auth/RegisterScreen')}>
+					<TouchableOpacity style={[styles.button, { backgroundColor: themeColors.accent }]} onPress={() => router.push('/auth/RegisterScreen')}>
 						<ThemedText style={{ color: themeColors.text }} type='button'>
 							Register
 						</ThemedText>
@@ -144,17 +144,12 @@ const styles = StyleSheet.create({
 		overflow: 'hidden',
 		padding: 10
 	},
-	signOutButton: {
+	button: {
 		paddingVertical: 12,
 		paddingHorizontal: 25,
 		borderRadius: 'center',
-		marginTop: 20
-	},
-	authButton: {
-		paddingVertical: 15,
-		paddingHorizontal: 30,
-		borderRadius: 25,
 		marginTop: 20,
-		alignSelf: 'center'
+		borderRadius: 15,
+		alignItems: 'center'
 	}
 });
