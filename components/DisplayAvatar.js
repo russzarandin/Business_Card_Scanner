@@ -58,7 +58,7 @@ const DisplayAvatar = ({ uri, style, themeColors }) => {
     if (loading) {
         return (
             <View style={[styles.avatar, style, styles.loadingContainer]}>
-                <ActivityIndicator size='small' color={themeColors.text} />
+                <ActivityIndicator size='small' color={themeColors.textPrimary} />
             </View>
         );
     }

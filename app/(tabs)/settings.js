@@ -62,18 +62,18 @@ export default function SettingsScreen() {
 	};
 
 	return (
-		<SafeAreaView style={[styles.container, { backgroundColor: themeColors.background }]}>
-			<ThemedText style={{ color: themeColors.text, marginBottom: 10 }} type='title'>Settings</ThemedText>
-			<ThemedText style={{ color: themeColors.text }} type='subtitle'>Theme Settings</ThemedText>
+		<SafeAreaView style={[styles.container, { backgroundColor: themeColors.backgroundPrimary }]}>
+			<ThemedText style={{ color: themeColors.textPrimary, marginBottom: 10 }} type='title'>Settings</ThemedText>
+			<ThemedText style={{ color: themeColors.textPrimary }} type='subtitle'>Theme Settings</ThemedText>
 
 			<View style={styles.settingItem}>
-				<ThemedText style={{ color: themeColors.text }}>Use System Theme</ThemedText>
+				<ThemedText style={{ color: themeColors.textPrimary }}>Use System Theme</ThemedText>
 				<Switch value={useSystemTheme} onValueChange={toggleSystemTheme} />
 			</View>
 
 			{!useSystemTheme && (
 				<View style={styles.settingItem}>
-					<ThemedText style={{ color: themeColors.text }}>Dark Mode</ThemedText>
+					<ThemedText style={{ color: themeColors.textPrimary }}>Dark Mode</ThemedText>
 					<Switch value={isDarkMode} onValueChange={toggleDarkMode} />
 				</View>
 			)}
@@ -81,36 +81,36 @@ export default function SettingsScreen() {
 			{user ? (
 				<>
 					<View style={styles.userInfo}>
-						<ThemedText style={{ color: themeColors.text }} type='subtitle'>
+						<ThemedText style={{ color: themeColors.textPrimary }} type='subtitle'>
 							Welcome, {user.displayName ? user.displayName : user.email}
 						</ThemedText>
 
 						<TouchableOpacity onPress={handleEditAvatar}>
 							<DisplayAvatar
 								uri={avatarUri}
-								style={[styles.avatar, { borderColor: themeColors.text }]}
+								style={[styles.avatar, { borderColor: themeColors.textPrimary }]}
 								themeColors={themeColors}
 							/>
 						</TouchableOpacity>
 					</View>
 					
 					<TouchableOpacity style={[styles.button, { backgroundColor: themeColors.red }]} onPress={handleSignOut}>
-						<ThemedText style={{ color: themeColors.text }} type='button'>Sign Out</ThemedText>
+						<ThemedText style={{ color: themeColors.textPrimary }} type='button'>Sign Out</ThemedText>
 					</TouchableOpacity>
 
-					<TouchableOpacity style={[styles.button, { backgroundColor: themeColors.accent }]} onPress={() => router.push('/auth/AccountSharingScreen')}>
-						<ThemedText style={{ color: themeColors.text }} type='button'>Display account information</ThemedText>
+					<TouchableOpacity style={[styles.button, { backgroundColor: themeColors.primary }]} onPress={() => router.push('/auth/AccountSharingScreen')}>
+						<ThemedText style={{ color: themeColors.textPrimary }} type='button'>Display account information</ThemedText>
 					</TouchableOpacity>
 				</>
 			) : (
 				<>
-					<TouchableOpacity style={[styles.button, { backgroundColor: themeColors.accent }]} onPress={() => router.push('/auth/LoginScreen')}>
+					<TouchableOpacity style={[styles.button, { backgroundColor: themeColors.primary }]} onPress={() => router.push('/auth/LoginScreen')}>
 						<ThemedText style={{ color: themeColors.text }} type='button'>
 							Login
 						</ThemedText>
 					</TouchableOpacity>
 
-					<TouchableOpacity style={[styles.button, { backgroundColor: themeColors.accent }]} onPress={() => router.push('/auth/RegisterScreen')}>
+					<TouchableOpacity style={[styles.button, { backgroundColor: themeColors.primary }]} onPress={() => router.push('/auth/RegisterScreen')}>
 						<ThemedText style={{ color: themeColors.text }} type='button'>
 							Register
 						</ThemedText>

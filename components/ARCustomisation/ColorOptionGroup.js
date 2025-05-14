@@ -8,22 +8,28 @@ const ColorOptionGroup = ({
     themeColors
 }) => (
     <View style={styles.optionGroup}>
-        <Text style={[styles.categoryLabel, { color: themeColors.text }]}>
+        <Text style={[styles.categoryLabel, { color: themeColors.textPrimary }]}>
             Colors
         </Text>
 
         <View style={styles.choicesContainer}>
-            {colorFields.map(({ key, label }) => (
-                <TouchableOpacity
-                    key={key}
-                    onPress={() => onColorPress(key)}
-                    style={[styles.colorButton, {backgroundColor: `#${currentColors[key] || 'ffffff'}`, borderColor: themeColors.text }]}
-                >
-                    <Text style={[styles.colorButtonText, { color: themeColors.text }]}>
-                        {label}
-                    </Text>
-                </TouchableOpacity>
-            ))}
+            {colorFields.map(({ key, label }) => {
+                const colorArray = currentColors[key];
+                const colorValue = Array.isArray(colorArray) ? colorArray[0] : colorArray;
+                const hexColor = colorValue ? `#${colorValue}` : '#ffffff';
+
+                return (
+                    <TouchableOpacity
+                        key={key}
+                        onPress={() => onColorPress(key)}
+                        style={[styles.colorButton, { backgroundColor: hexColor, borderColor: themeColors.textPrimary }]}
+                    >
+                        <Text style={[styles.colorButtonText, { color: themeColors.text }]}>
+                            {label}
+                        </Text>
+                    </TouchableOpacity>
+                );
+            })}
         </View>
     </View>
 );
@@ -48,11 +54,14 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
         borderRadius: 20,
         borderWidth: 1,
-        minWidth: 100
+        minWidth: 100,
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     colorButtonText: {
         fontSize: 12,
-        textAlign: 'center'
+        textAlign: 'center',
+        fontWeight: '500'
     }
 });
 

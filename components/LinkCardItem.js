@@ -13,19 +13,19 @@ const LinkCardItem = memo(({
     const scale = isActive ? 1.03: 1;
     const elevation = isActive ? 5 : 1;
 
-    const backgroundColor = isActive ? themeColors.accent + '20' : themeColors.background
+    const backgroundColor = isActive ? themeColors.primary + '20' : themeColors.background
 
     return (
-        <Animated.View style={[styles.container, { transform: [{ scale}], elevation, backgroundColor, borderColor: themeColors.text + '30' }]}>
+        <Animated.View style={[styles.container, { transform: [{ scale}], elevation, backgroundColor, borderColor: themeColors.textPrimary + '30' }]}>
             <View style={styles.handle}>
                 <TouchableOpacity onPressIn={onDrag} style={styles.dragHandle}>
-                    <MaterialIcons name='drag-handle' size={24} color={themeColors.text} />
+                    <MaterialIcons name='drag-handle' size={24} color={themeColors.textPrimary} />
                 </TouchableOpacity>
             </View>
 
             <View style={styles.content}>
                 <TextInput
-                    style={[styles.input, { color: themeColors.text, borderColor: themeColors.accent }]}
+                    style={[styles.input, { color: themeColors.textPrimary, borderColor: themeColors.primary }]}
                     value={link.url}
                     onChangeText={onChangeText}
                     placeholder='https://example.com'

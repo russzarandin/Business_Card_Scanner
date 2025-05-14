@@ -27,38 +27,38 @@ export default function RegisterScreen() {
     };
 
     return (
-        <View style={[styles.container, { backgroundColor: themeColors.background }]}>
-            <Text style={[styles.title, { color: themeColors.text }]}>Register</Text>
+        <View style={[styles.container, { backgroundColor: themeColors.backgroundPrimary }]}>
+            <Text style={[styles.title, { color: themeColors.textPrimary }]}>Register</Text>
             <TextInput
-                style={[styles.input, { color: themeColors.text }]}
+                style={[styles.input, { color: themeColors.textPrimary }]}
                 placeholder='Full name'
-                placeholderTextColor={themeColors.text}
+                placeholderTextColor={themeColors.textSecondary}
                 value={name}
                 onChangeText={setName}
             />
             <TextInput
-                style={[styles.input, { color: themeColors.text }]}
+                style={[styles.input, { color: themeColors.textPrimary }]}
                 placeholder='Email'
-                placeholderTextColor={themeColors.text}
+                placeholderTextColor={themeColors.textSecondary}
                 value={email}
                 onChangeText={setEmail}
                 autoCapitalize='none'
             />
             <TextInput
-                style={[styles.input, { color:themeColors.text }]}
+                style={[styles.input, { color:themeColors.textPrimary }]}
                 placeholder='Password'
-                placeholderTextColor={themeColors.text}
+                placeholderTextColor={themeColors.Secondary}
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry
             />
             
-            <TouchableOpacity style={[styles.button, { backgroundColor: themeColors.accent }]} onPress={handleRegister}>
-                <Text style={[styles.buttonText, { color: themeColors.text }]}>Register</Text>
+            <TouchableOpacity style={[styles.button, { backgroundColor: themeColors.primary }]} onPress={handleRegister}>
+                <Text style={[styles.buttonText, { color: themeColors.textPrimary }]}>Register</Text>
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => router.push('/auth/LoginScreen')}>
-                <Text style={[styles.link, { color: themeColors.accent }]}>Already have an account? Login</Text>
+                <Text style={[styles.link, { color: themeColors.primary }]}>Already have an account? Login</Text>
             </TouchableOpacity>
         </View>
     );

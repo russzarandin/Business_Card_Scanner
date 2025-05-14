@@ -137,19 +137,19 @@ export default function EditAccountScreen() {
 
     if (loading) {
         return (
-            <View style={[styles.loadingContainer, { backgroundColor: themeColors.background }]}>
-                <ActivityIndicator size='large' color={themeColors.accent} />
+            <View style={[styles.loadingContainer, { backgroundColor: themeColors.backgroundPrimary }]}>
+                <ActivityIndicator size='large' color={themeColors.primary} />
             </View>
         );
     };
                                             
     return (
-        <SafeAreaView style={[styles.container, { backgroundColor: themeColors.background }]}>
+        <SafeAreaView style={[styles.container, { backgroundColor: themeColors.backgroundPrimary }]}>
             <View style={styles.header}>
-                <Text style={[styles.title, { color: themeColors.text }]}>Edit your links</Text>
+                <Text style={[styles.title, { color: themeColors.textPrimary }]}>Edit your links</Text>
             </View>
 
-            <Text style={[styles.instruction, { color: themeColors.text }]}>
+            <Text style={[styles.instruction, { color: themeColors.textPrimary }]}>
                 Press and hold an item to drag and reorder
             </Text>
 
@@ -160,18 +160,18 @@ export default function EditAccountScreen() {
             />
 
             <View style={styles.buttonContainer}>
-                <TouchableOpacity style={[styles.addButton, { backgroundColor: themeColors.accent }]} onPress={handleAddLink}>
-                    <MaterialIcons name='add' size={24} color={themeColors.text} />
-                    <Text style={[styles.buttonText, { color: themeColors.text }]}>Add Link</Text>
+                <TouchableOpacity style={[styles.addButton, { backgroundColor: themeColors.primary }]} onPress={handleAddLink}>
+                    <MaterialIcons name='add' size={24} color={themeColors.textPrimary} />
+                    <Text style={[styles.buttonText, { color: themeColors.textPrimary }]}>Add Link</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={[styles.saveButton, { backgroundColor: themeColors.accent }]} onPress={handleSave} disabled={saving}>
+                <TouchableOpacity style={[styles.saveButton, { backgroundColor: themeColors.primary }]} onPress={handleSave} disabled={saving}>
                     {saving ? (
-                        <ActivityIndicator size='small' color={themeColors.accent} />
+                        <ActivityIndicator size='small' color={themeColors.primary} />
                     ) : (
-                        <MaterialIcons name='save' size={24} color={themeColors.text} />
+                        <MaterialIcons name='save' size={24} color={themeColors.textPrimary} />
                     )}
-                    <Text style={[styles.buttonText, { color: themeColors.text }]}>Save</Text>
+                    <Text style={[styles.buttonText, { color: themeColors.textPrimary }]}>Save</Text>
                 </TouchableOpacity>
             </View>
 

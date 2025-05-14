@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Alert, AppState, Platform, Dimensions, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Alert, AppState, Platform, Dimensions, ActivityIndicator, LogBox } from 'react-native';
 import { Camera, useCameraDevice, useCameraFormat, useCameraPermission, useCodeScanner } from 'react-native-vision-camera';
 import TextRecognition from '@react-native-ml-kit/text-recognition';
 import ImagePicker from 'react-native-image-crop-picker';
@@ -14,6 +14,15 @@ import RNFS from 'react-native-fs';
 const { width } = Dimensions.get('window');
 const CAPTURE_BUTTON_SIZE = width * 0.2;
 
+if (!__DEV__) {
+    console.log = () => {};
+    console.info = () => {};
+    console.warn = () => {};
+    console.error = () => {};
+
+    LogBox.ignoreAllLogs();
+}
+ 
 export default function HomeScreen() {
     const { themeColors } = useDarkMode();
     const { user } = useContext(AuthContext);
@@ -62,9 +71,9 @@ export default function HomeScreen() {
             }
 
             Alert.alert('Success', 'Business card saved successfully');
-            console.log('Structured Data:', processedData);
+             if (__DEV__) console.log('Structured Data:', processedData);
         } catch (error) {
-            console.error('OCR Error:', error);
+            if (__DEV__) console.error('OCR Error:', error);
             Alert.alert('Error', 'Failed to process the business card');
         } finally {
             setIsActive(true);
@@ -83,8 +92,6 @@ export default function HomeScreen() {
                 skipMetadata: true
             });
 
-            // setIsActive(false);
-
             let photoPath = photo.path;
             if (Platform.OS === 'android') {
                 const destPath = `${RNFS.CachesDirectoryPath}/${Date.now()}.jpg`;
@@ -92,23 +99,33 @@ export default function HomeScreen() {
                 photoPath = `file://${destPath}`;
             }
 
-            const croppedPhoto = await ImagePicker.openCropper({
-                path: photoPath,
-                width: 800,
-                height: 600,
-                cropperCircleOverlay: false,
-                freeStyleCropEnabled: true,
-                mediaType: 'photo',
-                includeBase64: false,
-                avoidEmptySpaceAroundImage: true
-            });
-            
-            if (croppedPhoto.path) {
-                await handleScan(croppedPhoto.path);
+            try {
+                const croppedPhoto = await ImagePicker.openCropper({
+                    path: photoPath,
+                    width: 800,
+                    height: 600,
+                    cropperCircleOverlay: false,
+                    freeStyleCropEnabled: true,
+                    mediaType: 'photo',
+                    includeBase64: false,
+                    avoidEmptySpaceAroundImage: true
+                });
+                
+                if (croppedPhoto && croppedPhoto.path) {
+                    await handleScan(croppedPhoto.path);
+                }
+            } catch (cropError) {
+                if (__DEV__) {
+                    console.log('User cancelled cropping:', cropError);
+                }
+
+                if (cropError.message && !cropError.message.includes('User cancelled')) {
+                    Alert.alert('Notice', 'Image cropping was cancelled');
+                }
             }
         } catch (error) {
-            console.error('Capture error:', error);
-            Alert.alert('Error', 'Failed to capture photo');
+            if (__DEV__) console.error('Capture error:', error);
+            
         } finally {
             setIsProcessing(false);
             setIsActive(true);

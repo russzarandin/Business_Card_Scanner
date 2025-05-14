@@ -87,22 +87,22 @@ export default function AccountSharingScreen({ userId: propUserId }) {
 
 
     return (
-        <View style={[styles.container, { backgroundColor: themeColors.background }]}>
-            <Text style={[styles.sectionTitle, { color: themeColors.text }]}>{isCurrentUser ? 'My Profile' : `${profileUser?.displayName || 'User'}'s Profile`}</Text>
+        <View style={[styles.container, { backgroundColor: themeColors.backgroundPrimary }]}>
+            <Text style={[styles.sectionTitle, { color: themeColors.textPrimary }]}>{isCurrentUser ? 'My Profile' : `${profileUser?.displayName || 'User'}'s Profile`}</Text>
 
             <View style={styles.qrContainer}>
                 <QRCode 
                     value={profileUrl}
                     size={200}
-                    color={themeColors.text}
-                    backgroundColor={themeColors.background}
+                    color={themeColors.textPrimary}
+                    backgroundColor={themeColors.backgroundPrimary}
                 />
             </View>
 
-            <Text style={[styles.sectionTitle, { color: themeColors.text }]}>{isCurrentUser ? 'My Links' : 'Links'}</Text>
+            <Text style={[styles.sectionTitle, { color: themeColors.textPrimary }]}>{isCurrentUser ? 'My Links' : 'Links'}</Text>
             
             {loading ? (
-                <ActivityIndicator size='large' color={ themeColors.accent } />
+                <ActivityIndicator size='large' color={ themeColors.primary } />
             ): links.length > 0 ? (
                 links.map((link, index) => {
                     const iconName = getPlatformIcon(link);
@@ -112,26 +112,26 @@ export default function AccountSharingScreen({ userId: propUserId }) {
                                 <MaterialCommunityIcons
                                     name={iconName}
                                     size={24}
-                                    color={themeColors.text}
+                                    color={themeColors.textPrimary}
                                     style={styles.icon}
                                 />
                             )}
-                            <Text style={[styles.link, { color: themeColors.accent }]}>{link}</Text>
+                            <Text style={[styles.link, { color: themeColors.primary }]}>{link}</Text>
                         </TouchableOpacity>
                     )
                 })
             ) : (
-                <Text style={{ color: themeColors.text }}>{isCurrentUser ? 'No links available' : 'User has no links'}</Text>
+                <Text style={{ color: themeColors.textPrimary }}>{isCurrentUser ? 'No links available' : 'User has no links'}</Text>
             )}
 
             {isCurrentUser && (
                 <>
-                    <TouchableOpacity style={[styles.button, {backgroundColor: themeColors.accent}]} onPress={handleNfcWrite}>
-                        <Text style={[styles.buttonText, { color: themeColors.text}]}> Share via NFC</Text>
+                    <TouchableOpacity style={[styles.button, { backgroundColor: themeColors.primary }]} onPress={handleNfcWrite}>
+                        <Text style={[styles.buttonText, { color: themeColors.textPrimary }]}> Share via NFC</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={[styles.button, { backgroundColor: themeColors.accent }]} onPress={() => router.push('/auth/EditAccountScreen')}>
-                        <Text style={[styles.buttonText, { color: themeColors.text }]}>Edit Links</Text>
+                    <TouchableOpacity style={[styles.button, { backgroundColor: themeColors.primary }]} onPress={() => router.push('/auth/EditAccountScreen')}>
+                        <Text style={[styles.buttonText, { color: themeColors.textPrimary }]}>Edit Links</Text>
                     </TouchableOpacity>
                 </>
             )}

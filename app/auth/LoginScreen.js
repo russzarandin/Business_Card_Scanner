@@ -27,31 +27,31 @@ export default function LoginScreen() {
     };
 
     return (
-        <View style={[styles.container, { backgroundColor: themeColors.background }]}>
-            <Text style={[styles.title, { color: themeColors.text }]}>Login</Text>
+        <View style={[styles.container, { backgroundColor: themeColors.backgroundPrimary }]}>
+            <Text style={[styles.title, { color: themeColors.textPrimary }]}>Login</Text>
             <TextInput 
-                style={[styles.input, { color: themeColors.text }]}
+                style={[styles.input, { color: themeColors.textPrimary }]}
                 placeholder='Email'
-                placeholderTextColor={themeColors.text}
+                placeholderTextColor={themeColors.textSecondary}
                 value={email}
                 onChangeText={setEmail}
                 autoCapitalize='none'
             />
             <TextInput 
-                style={[styles.input, { color: themeColors.text }]}
+                style={[styles.input, { color: themeColors.textPrimary }]}
                 placeholder='Password'
-                placeholderTextColor={themeColors.text}
+                placeholderTextColor={themeColors.textSecondary}
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry
             />
             
-            <TouchableOpacity style={[styles.button, { backgroundColor: themeColors.accent }]} onPress={handleLogin}>
-                <Text style={[styles.buttonText, { color: themeColors.text }]}>Login</Text>
+            <TouchableOpacity style={[styles.button, { backgroundColor: themeColors.primary }]} onPress={handleLogin}>
+                <Text style={[styles.buttonText, { color: themeColors.textPrimary }]}>Login</Text>
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => router.push('/auth/RegisterScreen')}>
-                <Text style={[styles.link, { color: themeColors.accent }]}>Don't have an account? Register</Text>
+                <Text style={[styles.link, { color: themeColors.primary }]}>Don't have an account? Register</Text>
             </TouchableOpacity>
         </View>
     );

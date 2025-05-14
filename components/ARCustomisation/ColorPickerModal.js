@@ -1,6 +1,6 @@
-import React, { useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native';
-import { ColorPicker } from 'react-native-color-picker';
+import ColorPicker, { Panel1, HueSlider, Preview, Swatches } from 'reanimated-color-picker';
 
 const ColorPickerModal = ({
     visible,
@@ -10,41 +10,42 @@ const ColorPickerModal = ({
     fieldName,
     themeColors
 }) => {
-    const pickerRef = useRef(null);
+    const [selectedColor, setSelectedColor] = useState(initialColor);
 
-    const handleConfirm = async () => {
-        try {
-            const color = await pickerRef.current.getCurrentColor();
-            onColorSelect(color);
-            onClose();
-        } catch (error) {
-            console.error('Error getting color:', error);
-            onClose();
-        }
+    const handleColorSelect = ({ hex }) => {
+        setSelectedColor(hex);
+    }
+
+    const handleConfirm = () => {
+        onColorSelect(selectedColor);
+        onClose();
     };
 
     return (
         <Modal visible={visible} transparent={true} animationType='slide'>
             <View style={styles.modalContainer}>
-                <View style={[styles.modalContent, { backgroundColor: themeColors.background}]}>
-                    <Text style={[styles.modalTitle, { color: themeColors.text }]}>
+                <View style={[styles.modalContent, { backgroundColor: themeColors.backgroundPrimary }]}>
+                    <Text style={[styles.modalTitle, { color: themeColors.textPrimary }]}>
                         Select {fieldName}
                     </Text>
 
                     <ColorPicker
-                        ref={pickerRef}
                         style={styles.colorPicker}
-                        defaultColor={initialColor}
-                        onColorSelected={color => {}}
-                        hideSliders={false}
-                    />
+                        value={selectedColor}
+                        onComplete={handleColorSelect}
+                    >
+                        <Preview hideInitialColor hideText />
+                        <Panel1 style={styles.panel} />
+                        <HueSlider style={styles.slider} />
+                        <Swatches style={styles.swatches} />
+                    </ColorPicker>
 
-                    <View style={styles.modalButtons}>
-                        <TouchableOpacity style={[styles.modalButton, { backgroundColor: themeColors.accent }]} onPress={handleConfirm}>
-                            <Text style={[styles.modalButtonText, { color: themeColors.text }]}>Confirm</Text>
+                    <View style={styles.buttonContainer}>
+                        <TouchableOpacity style={[styles.button, { backgroundColor: themeColors.primary }]} onPress={handleConfirm}>
+                            <Text style={[styles.buttonText, { color: themeColors.textPrimary }]}>Confirm</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={[styles.modalButton, { backgroundColor: themeColors.red }]} onPress={onClose}>
-                            <Text style={[styles.modalButtonText, { color: themeColors.text }]}>Cancel</Text>
+                        <TouchableOpacity style={[styles.button, { backgroundColor: themeColors.red }]} onPress={onClose}>
+                            <Text style={[styles.buttonText, { color: themeColors.textPrimary }]}>Cancel</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -63,7 +64,8 @@ const styles = StyleSheet.create({
     modalContent: {
         width: '90%',
         padding: 20,
-        borderRadius: 10
+        borderRadius: 10,
+        alignItems: 'center'
     },
     modalTitle: {
         fontSize: 18,
@@ -73,21 +75,35 @@ const styles = StyleSheet.create({
     },
     colorPicker: {
         width: '100%',
-        height: 300,
         marginBottom: 20
     },
-    modalButtons: {
-        flexDirection: 'row',
-        justifyContent: 'space-between'
+    panel: {
+        borderRadius: 8,
+        marginBottom: 15
     },
-    modalButton: {
-        padding: 10,
+    slider: {
+        borderRadius: 8,
+        marginBottom: 15,
+        height: 30
+    },
+    swatches: {
+        borderRadius: 8,
+        marginBottom: 20
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100'
+    },
+    button: {
+        padding: 12,
         borderRadius: 5,
         minWidth: 100,
         alignItems: 'center'
     },
-    modalButtonText: {
-        fontSize: 16
+    buttonText: {
+        fontSize: 16,
+        fontWeight: '500'
     }
 });
 

@@ -3,9 +3,9 @@ import { Text, View, ActivityIndicator, StyleSheet, TouchableOpacity, Alert, Scr
 import { SvgXml } from 'react-native-svg';
 import { useRouter } from 'expo-router';
 import { AuthContext } from '@/contexts/AuthContext';
-import { updateUserAvatar } from '@/services/userService';
+import { getUserAvatar, updateUserAvatar } from '@/services/userService';
 import { useDarkMode } from '@/contexts/DarkModeContext';
-import { defaultAvatarOptions, generateAvatar } from '@/config/avatarConfig';
+import { defaultAvatarOptions, generateAvatar, parseAvatarUrl } from '@/config/avatarConfig';
 import AvatarCustomiser from '@/components/AvatarCustomiser';
 import DisplayAvatar from '@/components/DisplayAvatar';
 
@@ -15,7 +15,32 @@ export default function AvatarCreatorScreen() {
     const { themeColors } = useDarkMode();
     
     const [options, setOptions] = useState(defaultAvatarOptions());
-    
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchUserAvatar = async () => {
+            if (!user?.uid) return;
+
+            try {
+                const avatarUrl = await getUserAvatar(user.uid);
+
+                if (avatarUrl) {
+                    const currentOptions = parseAvatarUrl(avatarUrl);
+                    setOptions(currentOptions);
+                } else {
+                    setOptions(defaultAvatarOptions());
+                }
+            } catch (error) {
+                console.error('Error fetching avatar:', error);
+                setOptions(defaultAvatarOptions());
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchUserAvatar();
+    }, [user?.uid]);
+
     const generateRandomSeed = () => {
         setOptions(prev => ({
             ...prev,
@@ -28,16 +53,24 @@ export default function AvatarCreatorScreen() {
         try {
             const avatarUrl = generateAvatar(options);
             await updateUserAvatar(user.uid, avatarUrl);
-            router.back()  // Fixed closing parenthesis
+            router.back()
         } catch (error) {
             Alert.alert('Error', 'Failed to update avatar');
             console.error('Avatar update error:', error);
         }
     };
 
+    if (loading || !options) {
+        return (
+            <View style={[styles.container, { backgroundColor: themeColors.backgroundPrimary }]}>
+                <ActivityIndicator size='large' color={themeColors.primary} />
+            </View>
+        );
+    };
+
     return (
-        <ScrollView style={{ flex: 1 }} contentContainerStyle={[styles.container, { backgroundColor: themeColors.background }]}>
-            <Text style={[styles.title, { color: themeColors.text }]}>Create your avatar</Text>
+        <ScrollView style={{ flex: 1 }} contentContainerStyle={[styles.container, { backgroundColor: themeColors.backgroundPrimary }]}>
+            <Text style={[styles.title, { color: themeColors.textPrimary }]}>Create your avatar</Text>
             
             <DisplayAvatar
                 uri={generateAvatar(options)}

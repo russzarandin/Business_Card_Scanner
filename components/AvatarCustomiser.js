@@ -102,21 +102,21 @@ const AvatarCustomiser = ({ avatarOptions, setAvatarOptions, onSave, currentAvat
             if (category === 'facialHair') {
                 if (value === 'none') {
                     newOptions.facialHairProbability = 0;
-                    delete newOptions.facialHair;
+                    newOptions.facialHair = ['none'];
                 } else {
-                    newOptions.facialHairProbability = 100;
-                    newOptions.facialHair = value;
+                    delete newOptions.facialHairProbability;
+                    newOptions.facialHair = [value];
                 }
             } else if (category === 'accessories') {
                 if (value === 'none') {
                     newOptions.accessoriesProbability = 0;
-                    delete newOptions.accessories;
+                    newOptions.accessories = ['none'];
                 } else {
-                    newOptions.accessoriesProbability = 100;
-                    newOptions.accessories = value;
+                    delete newOptions.accessoriesProbability;
+                    newOptions.accessories = [value];
                 }
             } else {
-                newOptions[category] = value;
+                newOptions[category] = [value];
             }
             return newOptions;
         });
@@ -133,19 +133,20 @@ const AvatarCustomiser = ({ avatarOptions, setAvatarOptions, onSave, currentAvat
     const handleColorSelect = (color) => {
         setAvatarOptions(prev => ({
             ...prev,
-            [colorPickerState.field]: color.replace('#', '')
+            [colorPickerState.field]: [color.replace('#', '')]
         }));
     };
 
     const getButtonStyle = (category, value) => {
         if (category === 'facialHair') {
             return (value === 'none' && avatarOptions.facialHairProbability === 0) ||
-                (value !== 'none' && avatarOptions.facialHair === value && avatarOptions.facialHairProbability === 100);
+                (value !== 'none' && Array.isArray(avatarOptions.facialHair) && avatarOptions.facialHair.includes(value) && avatarOptions.facialHairProbability === 100);
         } else if (category === 'accessories') {
-            return (value === 'none' && avatarOptions.accessoriesProbability === 0) ||
-                (value !== 'none' && avatarOptions.accessories === value && avatarOptions.accessoriesProbability === 100);
+            return ( value === 'none' && avatarOptions.accessoriesProbability === 0) ||
+                (value !== 'none' && Array.isArray(avatarOptions.accessories) && avatarOptions.accessories.includes(value) && avatarOptions.accessoriesProbability === 100);
         }
-        return avatarOptions[category] === value;
+        return Array.isArray(avatarOptions[category]) &&
+        avatarOptions[category].includes(value);
     };
 
     return (
@@ -178,7 +179,7 @@ const AvatarCustomiser = ({ avatarOptions, setAvatarOptions, onSave, currentAvat
                 style={[styles.saveButton, { backgroundColor: themeColors.primary }]}
                 onPress={onSave}
             >
-                <Text style={[styles.saveButtonText, { color: themeColors.text }]}>
+                <Text style={[styles.saveButtonText, { color: themeColors.textPrimary }]}>
                     Save Avatar
                 </Text>
             </TouchableOpacity>
