@@ -3,6 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useColorScheme as useRNColorScheme } from 'react-native';
 
 import { Colors } from '@/constants/Colors';
+import { CurrentRenderContext } from '@react-navigation/native';
 
 const DarkModeContext = createContext();
 
@@ -49,12 +50,26 @@ export const DarkModeProvider = ({ children }) => {
         }
     };
 
+    const currentColors = isDarkMode ? Colors.dark : Colors.light;
+
     const themeColors = {
-        background: isDarkMode ? Colors.dark.background : Colors.light.background,
-        text: isDarkMode ? Colors.dark.text : Colors.light.text,
-        accent: isDarkMode ? Colors.dark.accent: Colors.light.accent,
-        border: isDarkMode ? Colors.dark.border : Colors.light.border,
-        red: isDarkMode ? Colors.dark.red : Colors.light.red
+        backgroundPrimary: currentColors.backgroundPrimary,
+        backgroundSecondary: currentColors.backgroundSecondary,
+        surface: currentColors.surface,
+
+        textPrimary: currentColors.textPrimary,
+        textSecondary: currentColors.textSecondary,
+
+        primary: currentColors.primary,
+        primaryButtonBackground: currentColors.primaryButtonBackground,
+        primaryButtonText: currentColors.primaryButtonText,
+
+        red: currentColors.red,
+        yellow: currentColors.yellow,
+        green: currentColors.green,
+
+        border: currentColors.border,
+        divider: currentColors.divider
     };
 
     return (

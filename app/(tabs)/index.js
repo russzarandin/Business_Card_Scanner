@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Alert, AppState, Platform } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Alert, AppState, Platform, Dimensions, ActivityIndicator } from 'react-native';
 import { Camera, useCameraDevice, useCameraFormat, useCameraPermission, useCodeScanner } from 'react-native-vision-camera';
 import TextRecognition from '@react-native-ml-kit/text-recognition';
 import ImagePicker from 'react-native-image-crop-picker';
@@ -10,6 +10,9 @@ import { saveLocalBusinessCard } from '@/services/localBusinessCardService';
 import { AuthContext } from '@/contexts/AuthContext';
 import NetInfo from '@react-native-community/netinfo';
 import RNFS from 'react-native-fs';
+
+const { width } = Dimensions.get('window');
+const CAPTURE_BUTTON_SIZE = width * 0.2;
 
 export default function HomeScreen() {
     const { themeColors } = useDarkMode();
@@ -34,7 +37,7 @@ export default function HomeScreen() {
         })();
         
         const subscription = AppState.addEventListener('change', (nextAppState) => {
-            setIsActive(nextAppState === 'active');
+            setIsActive(nextAppState === 'active' && !isProcessing);
         });
         
         return () => subscription.remove();
@@ -111,24 +114,20 @@ export default function HomeScreen() {
             setIsActive(true);
         }
     };
-    if (!hasPermission) {
+    if (!hasPermission || !device) {
         return (
-            <View style={[styles.container, { background: themeColors.background }]}>
-                <Text>Camera Permission required</Text>
-            </View>
-        );
-    };
-
-    if (!device) {
-        return (
-            <View style={[styles.container, { backgroundColor: themeColors.background }]}>
-                <Text>No camera device found</Text>
+            <View style={[styles.container, { background: themeColors.backgroundPrimary }]}>
+                {hasPermission ? (
+                    <Text style={{ color: themeColors.textPrimary, textAlign: 'center' }}>Configuring camera...</Text>
+                ) : (
+                    <Text style={{ color: themeColors.textPrimary, textAlign: 'center' }}>Camera Permission required. Please enable it in settings</Text>
+                )}
             </View>
         );
     };
 
     return (
-        <View style={[styles.container, { backgroundColor: themeColors.background }]}>
+        <View style={[styles.container, { backgroundColor: themeColors.backgroundPrimary }]}>
             <Camera
                 ref={cameraRef}
                 style={StyleSheet.absoluteFill}
@@ -138,8 +137,12 @@ export default function HomeScreen() {
                 photo={true}
             />
 
-            <TouchableOpacity onPress={capturePhoto} style={[styles.scanButton, { background: themeColors. accent }]} disabled={isProcessing}>
-                <Text style={[styles.buttonText, { color: themeColors.text }]}>{isProcessing ? 'Processing...' : 'Scan Business Card'}</Text>
+            <TouchableOpacity onPress={capturePhoto} style={[styles.captureButton, { background: themeColors.backgroundPrimary }]} disabled={isProcessing}>
+                {isProcessing ? (
+                    <ActivityIndicator size='small' color={themeColors.primaryButtonText} />
+                ) : (
+                    <View style={styles.captureButtonInner} />
+                )}
             </TouchableOpacity>
         </View>
     );
@@ -147,43 +150,25 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center'
-    }, 
-    titleContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 8,
-        padding: 20
+        flex: 1
     },
-    resultContainer: {
+    captureButton: {
         position: 'absolute',
-        top: 50,
-        left: 20,
-        backgroundColor: 'rgb(0,0,0,0.1)',
-        borderRadius: 5,
-        padding: 10,
-        borderRadius: 5
+        bottom: 40,
+        alignSelf: 'center',
+        width: CAPTURE_BUTTON_SIZE,
+        height: CAPTURE_BUTTON_SIZE,
+        borderRadius: CAPTURE_BUTTON_SIZE / 2,
+        backgroundColor: 'rgba(255, 255, 255, 0.2)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 4,
+        borderColor: 'rgba(255, 255, 255, 0.5)',
     },
-    resultText: {
-        fontSize: 18
-    },
-    image: {
-        height: 200,
-        width: '100%',
-        resizeMode: 'contain',
-        marginTop: 10
-    },
-    scanButton: {
-        paddingVertical: 15,
-        paddingHorizontal: 30,
-        borderRadius: 25,
-        elevation: 5
-    },
-    buttonText: {
-        fontWeight: '600',
-        fontSize: 16,
-        letterSpacing: 0.5
-    },
+    captureButtonInner: {
+        width: CAPTURE_BUTTON_SIZE * 0.7,
+        height: CAPTURE_BUTTON_SIZE * 0.7,
+        borderRadius: (CAPTURE_BUTTON_SIZE * 0.7) / 2,
+        backgroundColor: 'white'
+    }
 });

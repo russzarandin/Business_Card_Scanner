@@ -36,3 +36,37 @@ export async function clearLocalBusinessCards() {
         console.error('Error clearing local business cards:', error);
     }
 };
+
+export async function deleteLocalBusinessCard(cardIdentifier) {
+    try {
+        const existingCards = await AsyncStorage.getItem(STORAGE_KEY);
+        if (!existingCards) return;
+
+        const cards = JSON.parse(existingCards);
+        const updatedCards = cards.filter(card =>
+            (card.id !== cardIdentifier && card.scannedAt !== cardIdentifier)
+        );
+
+        await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedCards));
+        console.log('Local business card deleted');
+    } catch (error) {
+        console.error('Error deleting local business cards:', error);
+    }
+};
+
+export async function deleteMultipleLocalBusinessCards(cardIdentifiers) {
+    try {
+        const existingCards = await AsyncStorage.getItem(STORAGE_KEY);
+        if (!existingCards) return;
+
+        const cards = JSON.parse(existingCards);
+        const updatedCards = cards.filter(card =>
+            (!cardIdentifiers.includes(card.id) && !cardIdentifiers.includes(card.scannedAt))
+        );
+
+        await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedCards));
+        console.log(`${cardIdentifiers.length} local business cards deleted`);
+    } catch (error) {
+        console.error(`Error deleting multiple local business cards:`, error);
+    }
+};
