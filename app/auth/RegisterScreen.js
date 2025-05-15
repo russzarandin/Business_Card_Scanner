@@ -47,7 +47,7 @@ export default function RegisterScreen() {
             <TextInput
                 style={[styles.input, { color:themeColors.textPrimary }]}
                 placeholder='Password'
-                placeholderTextColor={themeColors.Secondary}
+                placeholderTextColor={themeColors.textSecondary}
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry

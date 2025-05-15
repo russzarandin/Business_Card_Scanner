@@ -72,9 +72,38 @@ const avatarOptionChoices = {
         { value: 'graphicShirt', label: 'Graphic shirt'},
         { value: 'hoodie', label: 'Hoodie'},
         { value: 'overall', label: 'Overall'},
-        { value: 'shirtAndCrewNeck', label: 'Shirt and crew neck'},
+        { value: 'shirtCrewNeck', label: 'Shirt and crew neck'},
         { value: 'shirtScoopNeck', label: 'Shirt scoop neck'},
         { value: 'shirtVNeck', label: 'Shirt V neck'},
+    ],
+    eyebrows: [
+        { value: 'angry', label: 'Angry'},
+        { value: 'angryNatural', label: 'Angry natural'},
+        { value: 'default', label: 'Default'},
+        { value: 'defaultNatural', label: 'Default natural'},
+        { value: 'flatNatural', label: 'Flat natural'},
+        { value: 'frownNatural', label: 'Frown natural'},
+        { value: 'raisedExcited', label: 'Raised excited'},
+        { value: 'raisedExcitedNatural', label: 'Raised excited natural'},
+        { value: 'sadConcerned', label: 'Sad concerned'},
+        { value: 'sadConcernedNatural', label: 'Sad concerned natural'},
+        { value: 'unibrowNatural', label: 'Unibrow natural'},
+        { value: 'upDown', label: 'Up down'},
+        { value: 'upDownNatural', label: 'Up down natural'}
+    ],
+    mouth: [
+        { value: 'concerned', label: 'Concerned'},
+        { value: 'default', label: 'Default'},
+        { value: 'disbelief', label: 'Disbelief'},
+        { value: 'eating', label: 'Eating'},
+        { value: 'grimace', label: 'Grimace'},
+        { value: 'sad', label: 'Sad'},
+        { value: 'screamOpen', label: 'Scream open'},
+        { value: 'serious', label: 'Serious'},
+        { value: 'smile', label: 'Smille'},
+        { value: 'tongue', label: 'Tongue'},
+        { value: 'twinkle', label: 'Twinkle'},
+        { value: 'vomit', label: 'Vomit'}
     ]
 };
 

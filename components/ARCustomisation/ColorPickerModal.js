@@ -1,6 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import ColorPicker, { Panel1, HueSlider, Preview, Swatches } from 'reanimated-color-picker';
+import { runOnJS } from 'react-native-reanimated';
 
 const ColorPickerModal = ({
     visible,
@@ -13,8 +14,9 @@ const ColorPickerModal = ({
     const [selectedColor, setSelectedColor] = useState(initialColor);
 
     const handleColorSelect = ({ hex }) => {
-        setSelectedColor(hex);
-    }
+        'worklet';
+        runOnJS(setSelectedColor)(hex);
+    };
 
     const handleConfirm = () => {
         onColorSelect(selectedColor);
@@ -37,7 +39,6 @@ const ColorPickerModal = ({
                         <Preview hideInitialColor hideText />
                         <Panel1 style={styles.panel} />
                         <HueSlider style={styles.slider} />
-                        <Swatches style={styles.swatches} />
                     </ColorPicker>
 
                     <View style={styles.buttonContainer}>
@@ -93,7 +94,7 @@ const styles = StyleSheet.create({
     buttonContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        width: '100'
+        width: '100%'
     },
     button: {
         padding: 12,

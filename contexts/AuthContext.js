@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
-import { auth } from '@/config/firebaseConfig';
+import { auth, firestore } from '@/config/firebaseConfig';
+import { doc, setDoc } from 'firebase/firestore';
 import {
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
@@ -41,21 +42,36 @@ export function AuthProvider({ children }) {
     };
 
     const signUp = async (name, email, password) => {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        try {    
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 
-        await updateProfile(userCredential.user, { displayName: name });
-        setUser(userCredential.user);
-        //After signing up, sync local scanned cards
-        await syncLocalCardsToFirestore();
-        return userCredential.user;
+            await updateProfile(userCredential.user, { displayName: name });
+            setUser(userCredential.user);
+
+            const userDocRef = doc(firestore, 'users', userCredential.user.uid);
+            await setDoc(userDocRef, {
+                uid: userCredential.user.uid,
+                displayName: name,
+                email: email,
+                createdAt: new Date().toISOString(),
+                avatarUrl: null
+            })
+            //After signing up, sync local scanned cards
+            await syncLocalCardsToFirestore();
+            return userCredential.user;
+        } catch (error) {
+            console.error('Error during sign-up process:', error);
+            throw error;
+        }
     };
 
-    const signIn = async (email, password) => {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        setUser(userCredential.user);
+        const signIn = async (email, password) => {
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            setUser(userCredential.user);
 
-        await syncLocalCardsToFirestore();
-        return userCredential.user;
+            await syncLocalCardsToFirestore();
+            return userCredential.user;
+        
     };
 
     const signOutUser = async () => {
