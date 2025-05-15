@@ -27,8 +27,7 @@ export default function EditAccountScreen() {
     const [links, setLinks] = useState([]);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
-    // const [pickerVisible, setPickerVisible] = useState(false);
-    
+
     useEffect(() => {
         if (!user?.uid) return;
         
@@ -99,8 +98,29 @@ export default function EditAccountScreen() {
             .map(link => formatUrl(link.url.trim()));
             
             for (const url of formattedLinks) {
-                if (!isValidUrl(url)) {
-                    Alert.alert('Invalid URL', `Ensure all links start with "https://". Problematic linkL ${url}`);
+                if (url.length > 150) {
+                    Alert.alert('Invalid URL', `Link too long (over 150 characters): \n ${url}`);
+                    setSaving(false);
+                    return;
+                }
+
+                try {
+                    const parsed = new URL(url);
+                    const protocol = parsed.protocol.toLowerCase();
+
+                    if (!protocol.startsWith('https:') || ['javascript:', 'data:', 'file:'].includes(protocol)) {
+                        Alert.alert('Invalid URL', `Blocked protocol in link\n${url}`);
+                        setSaving(false);
+                        return;
+                    }
+
+                    if (!isValidUrl(url)) {
+                        Alert.alert('Invalid URL', `Malformed or unsafe link: \n${url}`);
+                        setSaving(false);
+                        return;
+                    }
+                } catch (error) {
+                    Alert.alert('Invalid URL', `Error parsing link:\n${url}`);
                     setSaving(false);
                     return;
                 }
@@ -129,7 +149,14 @@ export default function EditAccountScreen() {
     const isValidUrl = (url) => {
         try {
             const parsed = new URL(url);
-            return parsed.protocol === 'https:';
+            const allowedProtocols = ['https:'];
+            const maxLength = 2083;
+
+            return (
+                allowedProtocols.includes(parsed.protocol) &&
+                url.length <= maxLength &&
+                /^[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=]+$/.test(url)
+            )
         } catch (error) {
             return false;
         }

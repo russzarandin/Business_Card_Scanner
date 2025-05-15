@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'reac
 import { AuthContext } from '@/contexts/AuthContext';
 import { useRouter } from 'expo-router';
 import { useDarkMode } from '@/contexts/DarkModeContext';
+import { isValidEmail, isValidName, isStrongPassword } from '@/utils/validation';
 
 export default function RegisterScreen() {
     const { signUp } = useContext(AuthContext);
@@ -17,6 +18,22 @@ export default function RegisterScreen() {
             Alert.alert('Please fill in all fields.');
             return;
         }
+
+        if (!isValidName(name)) {
+            Alert.alert('Please enter a valid full name without emojis');
+            return;
+        }
+
+        if (!isValidEmail(email)) {
+            Alert.alert('Please enter a valid email address');
+            return;
+        }
+
+        if (!isStrongPassword(password)) {
+            Alert.alert('Password must be at least 6 characters long');
+            return;
+        }
+
         try {
             await signUp(name, email, password);
             Alert.alert('Registration Successful!');

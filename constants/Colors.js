@@ -35,7 +35,7 @@ export const Colors = {
     primaryButtonBackground: '#41AA9E',
     primaryButtonText: '#040B0A',
 
-    red: '#EF9A9A',
+    red: '#D32F2F',
     yellow: '#FFEB3B',
     green: '#A5D6A7',
 

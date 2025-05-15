@@ -1,4 +1,6 @@
-
+/**
+ * @fileoverview this file repre
+ */
 
 import { Tabs } from "expo-router";
 import React from "react";
@@ -14,7 +16,7 @@ export default function TabLayout() {
 	return (
 		<Tabs
 			screenOptions={{
-				tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
+				tabBarActiveTintColor: Colors[colorScheme ?? "light"].primary,
 				headerShown: false,
 				tabBarStyle: Platform.select({
 					ios: {

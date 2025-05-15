@@ -10,7 +10,7 @@ const OptionGroup = ({
     isActive
 }) => (
     <View style={styles.optionGroup}>
-        <Text style={[styles.categoryLabel, { color: themeColors.text }]}>
+        <Text style={[styles.categoryLabel, { color: themeColors.textPrimary }]}>
             {category.split(/(?=[A-Z])/).join(' ')}
         </Text>
 
@@ -19,9 +19,9 @@ const OptionGroup = ({
                 <TouchableOpacity
                     key={value}
                     onPress={() => onSelect(category, value)}
-                    style={[styles.choiceButton, isActive(value) && { backgroundColor: themeColors.accent, borderColor: themeColors.accent }]}
+                    style={[styles.choiceButton, isActive(value) && { backgroundColor: themeColors.primary, borderColor: themeColors.primary }]}
                 >
-                    <Text style={[styles.choiceText, { color: themeColors.text }, isActive(value) && { color: themeColors.background }]}>
+                    <Text style={[styles.choiceText, { color: themeColors.textPrimary }, isActive(value) && { color: themeColors.backgroundPrimary }]}>
                         {label}
                     </Text>
                 </TouchableOpacity>

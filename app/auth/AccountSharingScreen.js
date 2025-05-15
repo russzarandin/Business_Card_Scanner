@@ -1,5 +1,8 @@
+/**
+ * @fileoverview Screen responsible for displaying the screen sharing functionality between users of the application
+ */
 import React, { useContext, useEffect, useState } from 'react';
-import { Text, View, TouchableOpacity, StyleSheet, ActivityIndicator, Linking, Alert } from 'react-native';
+import { Text, View, TouchableOpacity, StyleSheet, ActivityIndicator, Linking, Alert, ScrollView } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useDarkMode } from '@/contexts/DarkModeContext';
@@ -8,7 +11,6 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { writeNFCTag } from '@/services/nfcService';
 import { firestore } from '@/config/firebaseConfig';
 import { doc, getDoc } from 'firebase/firestore';
-
 
 const socialIcons = {
     'facebook.com': 'facebook',
@@ -87,7 +89,7 @@ export default function AccountSharingScreen({ userId: propUserId }) {
 
 
     return (
-        <View style={[styles.container, { backgroundColor: themeColors.backgroundPrimary }]}>
+        <ScrollView contentContainerStyle={{ alignItems: 'center', paddingBottom: 25 }} style={[styles.container, { backgroundColor: themeColors.backgroundPrimary }]}>
             <Text style={[styles.sectionTitle, { color: themeColors.textPrimary }]}>{isCurrentUser ? 'My Profile' : `${profileUser?.displayName || 'User'}'s Profile`}</Text>
 
             <View style={styles.qrContainer}>
@@ -116,7 +118,7 @@ export default function AccountSharingScreen({ userId: propUserId }) {
                                     style={styles.icon}
                                 />
                             )}
-                            <Text style={[styles.link, { color: themeColors.primary }]}>{link}</Text>
+                            <Text style={[styles.link, { color: themeColors.green }]}>{link}</Text>
                         </TouchableOpacity>
                     )
                 })
@@ -135,16 +137,15 @@ export default function AccountSharingScreen({ userId: propUserId }) {
                     </TouchableOpacity>
                 </>
             )}
-        </View>
+        </ScrollView>
     );
 };
 
 
 const styles = StyleSheet.create({
     container: {
-        alignItems: 'center',
-        height: '100%',
-        padding: 20
+        padding: 20,
+        flex: 1,
     },
     qrContainer: {
         marginVertical: 20

@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'reac
 import { AuthContext } from '@/contexts/AuthContext';
 import { useRouter } from 'expo-router';
 import { useDarkMode } from '@/contexts/DarkModeContext';
+import { isValidEmail } from '@/utils/validation';
 
 export default function LoginScreen() {
     const { signIn } = useContext(AuthContext);
@@ -16,6 +17,12 @@ export default function LoginScreen() {
             Alert.alert('Please fill in all fields.');
             return;
         }
+
+        if (!isValidEmail(email)) {
+            Alert.alert('Invalid email format');
+            return;
+        }
+        
         try {
             await signIn(email, password);
             Alert.alert('Login Successful!');

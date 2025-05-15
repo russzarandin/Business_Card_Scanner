@@ -138,7 +138,7 @@ export default function BusinessCardsScreen() {
             <TouchableOpacity
                 style={[
                     styles.card,
-                    { backgroundColor: themeColors.backgroundSecondary },
+                    { backgroundColor: themeColors.primary },
                     isSelected && { borderColor: themeColors.primary, borderWidth: 2 }
                 ]}
                 onPress={() => handleCardPress(item)}
