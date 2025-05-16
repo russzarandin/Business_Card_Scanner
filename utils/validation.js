@@ -1,6 +1,6 @@
 export function isValidEmail(email) {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.text(String(email).toLowerCase());
+    const re = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return re.test(String(email).toLowerCase());
 };
 
 export function isValidName(name) {
@@ -9,6 +9,10 @@ export function isValidName(name) {
 };
 
 export function isStrongPassword(password) {
-    return password.length >= 6;
-}
+    const validLength = password.length >= 6 && password.length <= 15;
+    const hasLetter = /[a-zA-Z]/.test(password);
+    const hasNumber = /\d/.test(password);
+    const hasOnlySafeChars = /^[\w!@#$%^&*()\-+=;:'",.<>?\\|[\]{}]*$/.test(password);
+    return validLength && hasLetter && hasNumber && hasOnlySafeChars;
+};
 

@@ -1,3 +1,7 @@
+/**
+ * @fileoverview file responsible for displaying the Avatar creator screen 
+ */
+
 import React, { useState, useContext, useEffect } from 'react';
 import { Text, View, ActivityIndicator, StyleSheet, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import { SvgXml } from 'react-native-svg';

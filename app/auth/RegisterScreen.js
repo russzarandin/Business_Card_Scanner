@@ -1,3 +1,7 @@
+/**
+ * @fileoverview File responsible for register screen
+ */
+
 import React, { useState, useContext } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { AuthContext } from '@/contexts/AuthContext';
@@ -20,7 +24,7 @@ export default function RegisterScreen() {
         }
 
         if (!isValidName(name)) {
-            Alert.alert('Please enter a valid full name without emojis');
+            Alert.alert('Please enter a valid full name');
             return;
         }
 

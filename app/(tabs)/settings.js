@@ -1,3 +1,7 @@
+/**
+ * @fileoverview This file is responsible for the settings screen
+ */
+
 import React, { useContext, useEffect, useState, useCallback } from 'react';
 import { View, Switch, StyleSheet, TouchableOpacity, Alert, Image } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';

@@ -11,6 +11,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { writeNFCTag } from '@/services/nfcService';
 import { firestore } from '@/config/firebaseConfig';
 import { doc, getDoc } from 'firebase/firestore';
+import DisplayAvatar from '@/components/DisplayAvatar';
 
 const socialIcons = {
     'facebook.com': 'facebook',

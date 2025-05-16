@@ -1,3 +1,7 @@
+/**
+ * @fileoverview File responsible for the EditAccountScreen which allows the user to personalise their account
+ */
+
 import React, { useState, useContext, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, SafeAreaView } from 'react-native';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';

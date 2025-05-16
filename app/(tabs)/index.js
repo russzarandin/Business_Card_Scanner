@@ -1,3 +1,7 @@
+/**
+ * @fileoverview This file is responsible for the landing page/camera screen
+ */
+
 import React, { useState, useContext, useEffect, useRef } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Alert, AppState, Platform, Dimensions, ActivityIndicator, LogBox } from 'react-native';
 import { Camera, useCameraDevice, useCameraFormat, useCameraPermission, useCodeScanner } from 'react-native-vision-camera';

@@ -1,5 +1,5 @@
 /**
- * @fileoverview this file repre
+ * @fileoverview This file represents the main navigation bar
  */
 
 import { Tabs } from "expo-router";

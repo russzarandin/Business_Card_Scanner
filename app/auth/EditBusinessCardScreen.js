@@ -1,3 +1,7 @@
+/**
+ * @fileoverview File responsible for the Editing business cards screen
+ */
+
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { View, TextInput, Button, StyleSheet } from 'react-native';
@@ -10,19 +14,9 @@ export default function EditBusinessCardScreen() {
     const [text, setText] = useState(rawText || '');
     const { themeColors } = useDarkMode();
 
-    function removeEmojis(text) {
-        return text.replace(/\p{Emoji}/gu, '');
-    };
-
     const handleSave = async () => {
-        const cleanText = removeEmojis(text);
-
-        if (cleanText.trim().length === 0) {
-            Alert.alert('Business card text cannot be empty of just emojis');
-            return;
-        }
         try {
-            await updateBusinessCard(cardId, { rawText: cleanText });
+            await updateBusinessCard(cardId, { rawText: text });
             router.back();
         } catch (error) {
             console.error('Failed to update card:', error);
@@ -31,9 +25,9 @@ export default function EditBusinessCardScreen() {
     };
 
     return (
-        <View style={[styles.container, { backgroundColor: themeColors.background }]}>
+        <View style={[styles.container, { backgroundColor: themeColors.backgroundPrimary }]}>
             <TextInput
-                style={[styles.input, { color: themeColors.text }]}
+                style={[styles.input, { color: themeColors.textPrimary }]}
                 multiline
                 value={text}
                 onChangeText={setText}

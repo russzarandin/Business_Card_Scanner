@@ -1,3 +1,7 @@
+/**
+ * @fileoverview File responsible for the login screen
+ */
+
 import React, { useState, useContext } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { AuthContext } from '@/contexts/AuthContext';

@@ -1,3 +1,7 @@
+/**
+ * @fileoverview This file is responsible for the Business cards screen
+ */
+
 import React, { useState, useContext, useCallback } from 'react';
 import { View, FlatList, Text, StyleSheet, ActivityIndicator, TouchableOpacity, Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
@@ -170,8 +174,7 @@ export default function BusinessCardsScreen() {
                             onPress={() => confirmDelete(false, cardId)}
                             style={styles.deleteButton}
                         >
-                            <Ionicons
-                                name="trash-outline" size={20} color={themeColors.textSecondary} />
+                            <Ionicons name="trash-outline" size={20} color={themeColors.textSecondary} />
                         </TouchableOpacity>
                     )}
                 </View>
