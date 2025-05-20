@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "frontend",
-    "slug": "frontend",
+    "name": "version2",
+    "slug": "aiarbusinesscardv2",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -15,14 +15,17 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "$(This application) needs access to your Camera."
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.babschiin.frontend",
+      "package": "com.babschiin.version2",
       "googleServicesFile": "./google-services.json",
       "compileSdkVersion": 33,
       "permissions": [
@@ -74,7 +77,8 @@
       ],
       "react-native-nfc-manager",
       "expo-asset",
-      ["react-native-vision-camera",
+      [
+        "react-native-vision-camera",
         {
           "cameraPermissionText": "$(This application) needs access to your Camera.",
           "microphonePermissionText": "$(This application) needs access to your Microphone.",
@@ -90,14 +94,15 @@
         "origin": false
       },
       "eas": {
-        "projectId": "b3a7c983-98c0-4a7a-bd19-792523622c40"
+        "projectId": "28933786-235d-42bd-b232-031fef8af571"
       }
     },
     "runtimeVersion": {
       "policy": "appVersion"
     },
     "updates": {
-      "url": "https://u.expo.dev/b3a7c983-98c0-4a7a-bd19-792523622c40"
-    }
+      "url": "https://u.expo.dev/28933786-235d-42bd-b232-031fef8af571"
+    },
+    "owner": "babschiin"
   }
 }
